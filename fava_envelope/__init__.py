@@ -1,5 +1,10 @@
 """
 """
+try:
+    import ipdb
+    ipdb.set_trace()
+except ImportError:
+    pass
 
 from fava.ext import FavaExtensionBase
 
