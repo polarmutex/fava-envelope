@@ -98,13 +98,11 @@ def envelope_tables(ledger, start_date, budget_accounts, mappings):
     header = ['account'] + ['{}-{:02d}'.format(*m) for m in header_months]
     rows = []
     for account in sorted(sbalances.keys()):
-        row = {}
-        row["account"] = account
-        #for month in header_months:
-        #    total = sbalances[account].get(month, None)
-        row["total"] = Decimal(0.00)
-        #row.append(str(total.quantize(Q)) if total else '')
+        row = [account]
+        for month in header_months:
+            total = sbalances[account].get(month, None)
+            row.append(str(total.quantize(Q)) if total else '')
         rows.append(row)
 
     #breakpoint()
-    return types, rows
+    return header, rows
