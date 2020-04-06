@@ -147,6 +147,8 @@ class BeancountEnvelope:
             for month in header_months:
                 total = sbalances[account].get(month, None)
                 temp = total.quantize(self.Q) if total else 0.00
+                # swap sign to be more human readable
+                temp *= -1
                 row.append(str(temp))
             rows.append(row)
 
@@ -159,5 +161,5 @@ class BeancountEnvelope:
                 logging.info(e)
                 if e.values[0].value == "transfer":
                     month = f"{e.date.year}-{e.date.month:02}"
-                    self.df.loc[e.values[1].value,(month,'budgeted')] = -1 * e.values[3].value
-                    self.df.loc[e.values[2].value,(month,'budgeted')] = e.values[3].value
+                    self.df.loc[e.values[1].value,(month,'budgeted')] = Decimal(-1 * e.values[3].value)
+                    self.df.loc[e.values[2].value,(month,'budgeted')] = Decimal(e.values[3].value)
