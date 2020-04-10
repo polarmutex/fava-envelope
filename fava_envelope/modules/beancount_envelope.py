@@ -48,7 +48,6 @@ class BeancountEnvelope:
 
         for e in self.entries:
             if isinstance(e, Custom) and e.type == "envelope":
-                logging.info(e)
                 if e.values[0].value == "start date":
                     start_date = e.values[1].value
                 if e.values[0].value == "budget account":
@@ -68,8 +67,6 @@ class BeancountEnvelope:
             month = month % 12  +1
             date_current = datetime.date(year, month,1)
 
-        logging.info(months)
-
         # Create Income DataFrame
         column_index = pd.MultiIndex.from_product([months], names=['Month'])
         self.income_df = pd.DataFrame(columns=months)
@@ -82,9 +79,20 @@ class BeancountEnvelope:
         self._calculate_budget_activity()
         self._calc_budget_budgeted()
 
+        # Set overspent
+        for index, month in enumerate(months):
+            if index == 0:
+                self.income_df.loc["Overspent", month] = Decimal(0.00)
+            else:
+                overspent = Decimal(0.00)
+                for index2, row in self.envelope_df.iterrows():
+                    if row[month,'available'] < Decimal(0.00):
+                        overspent += Decimal(row[month, 'available'])
+                self.income_df.loc["Overspent", month] = overspent
+
         # Set Budgeted for month
         for month in months:
-            self.income_df.loc["Budgeted",month] = self.envelope_df[month,'budgeted'].sum()
+            self.income_df.loc["Budgeted",month] = Decimal(-1 * self.envelope_df[month,'budgeted'].sum())
 
         # Set available
         for index, row in self.envelope_df.iterrows():
@@ -98,18 +106,35 @@ class BeancountEnvelope:
                     else:
                         row[month, 'available'] = row[month, 'budgeted'] + row[month, 'activity']
 
-        # Set overspent
+        # Set Budgeted in the future
+        for index, month in enumerate(months):
+            sum_total = self.income_df[month].sum();
+            if (index == len(months)-1) or sum_total < 0 :
+                self.income_df.loc["Budgeted Future", month] = Decimal(0.00)
+            else:
+                next_month = months[index+1]
+                opp_budgeted_next_month = self.income_df.loc["Budgeted",next_month] * -1
+                if opp_budgeted_next_month < sum_total:
+                    self.income_df.loc["Budgeted Future", month] = Decimal(-1*opp_budgeted_next_month)
+                else:
+                    self.income_df.loc["Budgeted Future", month] = Decimal(sum_total)
+
+
+        # Adjust Avail Income
         for index, month in enumerate(months):
             if index == 0:
-                self.income_df.loc["Overspent", month] = Decimal(0.00)
+                continue
             else:
-                overspent = Decimal(0.00)
-                for index2, row in self.envelope_df.iterrows():
-                    if row[month,'available'] < Decimal(0.00):
-                        overspent += Decimal(row[month, 'available'])
-                self.income_df.loc["Overspent", month] = overspent
+                prev_month = months[index-1]
+                self.income_df.loc["Avail Income", month] = \
+                    self.income_df.loc["Avail Income",month] + \
+                    self.income_df.loc["Avail Income", prev_month] + \
+                    self.income_df.loc["Overspent", prev_month] + \
+                    self.income_df.loc["Budgeted", prev_month]
 
-
+        # Set to be budgeted
+        for index, month in enumerate(months):
+            self.income_df.loc["To Be Budgeted", month] = Decimal(self.income_df[month].sum())
 
         return self.income_df, self.envelope_df
 
@@ -195,7 +220,6 @@ class BeancountEnvelope:
         rows = {}
         for e in self.entries:
             if isinstance(e, Custom) and e.type == "envelope":
-                logging.info(e)
                 if e.values[0].value == "transfer":
                     month = f"{e.date.year}-{e.date.month:02}"
                     self.envelope_df.loc[e.values[1].value,(month,'budgeted')] = Decimal(e.values[2].value)
