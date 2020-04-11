@@ -23,6 +23,7 @@ def main():
     df1, df2 = ext.envelope_tables()
     #logging.info(df)
     print(df1)
+    print(df2)
 
 
 if __name__ == '__main__':

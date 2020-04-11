@@ -412,17 +412,15 @@ testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pyt
 [[package]]
 category = "dev"
 description = "An autocompletion tool for Python that can be used for text editors."
-marker = "python_version >= \"3.4\""
 name = "jedi"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "0.16.0"
+version = "0.15.2"
 
 [package.dependencies]
 parso = ">=0.5.2"
 
 [package.extras]
-qa = ["flake8 (3.7.9)"]
 testing = ["colorama (0.4.1)", "docopt", "pytest (>=3.9.0,<5.0.0)"]
 
 [[package]]
@@ -516,7 +514,6 @@ test = ["pytest (>=4.0.2)", "pytest-xdist", "hypothesis (>=3.58)"]
 [[package]]
 category = "dev"
 description = "A Python Parser"
-marker = "python_version >= \"3.4\""
 name = "parso"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
@@ -694,6 +691,47 @@ version = "2.8.1"
 six = ">=1.5"
 
 [[package]]
+category = "dev"
+description = "JSON RPC 2.0 server library"
+name = "python-jsonrpc-server"
+optional = false
+python-versions = "*"
+version = "0.3.4"
+
+[package.dependencies]
+ujson = "<=1.35"
+
+[package.extras]
+test = ["versioneer", "pylint", "pycodestyle", "pyflakes", "pytest", "mock", "pytest-cov", "coverage"]
+
+[[package]]
+category = "dev"
+description = "Python Language Server for the Language Server Protocol"
+name = "python-language-server"
+optional = false
+python-versions = "*"
+version = "0.31.9"
+
+[package.dependencies]
+jedi = ">=0.14.1,<0.16"
+pluggy = "*"
+python-jsonrpc-server = ">=0.3.2"
+ujson = "<=1.35"
+
+[package.extras]
+all = ["autopep8", "flake8", "mccabe", "pycodestyle", "pydocstyle (>=2.0.0)", "pyflakes (>=1.6.0)", "pylint", "rope (>=0.10.5)", "yapf"]
+autopep8 = ["autopep8"]
+flake8 = ["flake8"]
+mccabe = ["mccabe"]
+pycodestyle = ["pycodestyle"]
+pydocstyle = ["pydocstyle (>=2.0.0)"]
+pyflakes = ["pyflakes (>=1.6.0)"]
+pylint = ["pylint"]
+rope = ["rope (>0.10.5)"]
+test = ["versioneer", "pylint", "pytest", "mock", "pytest-cov", "coverage", "numpy", "pandas", "matplotlib", "pyqt5"]
+yapf = ["yapf"]
+
+[[package]]
 category = "main"
 description = "File type identification using libmagic"
 name = "python-magic"
@@ -780,6 +818,15 @@ six = "*"
 test = ["pytest", "mock"]
 
 [[package]]
+category = "dev"
+description = "Ultra fast JSON encoder and decoder for Python"
+marker = "platform_system != \"Windows\""
+name = "ujson"
+optional = false
+python-versions = "*"
+version = "1.35"
+
+[[package]]
 category = "main"
 description = "URI templates"
 name = "uritemplate"
@@ -834,7 +881,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "532fdc8580d98e22b58161fabf4cea6ee746d185a5faab3272ff264551bef69a"
+content-hash = "e94f95599d903e23a0bfd2ae1527cf1cc3c35ba033a935b946b5dd39da01e888"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -961,8 +1008,8 @@ itsdangerous = [
     {file = "jaraco.functools-3.0.0.tar.gz", hash = "sha256:5cb0eea0f254584241c519641328a4d4ec2001a86c3cd6d17a8fd228493f6d97"},
 ]
 jedi = [
-    {file = "jedi-0.16.0-py2.py3-none-any.whl", hash = "sha256:b4f4052551025c6b0b0b193b29a6ff7bdb74c52450631206c262aef9f7159ad2"},
-    {file = "jedi-0.16.0.tar.gz", hash = "sha256:d5c871cb9360b414f981e7072c52c33258d598305280fef91c6cae34739d65d5"},
+    {file = "jedi-0.15.2-py2.py3-none-any.whl", hash = "sha256:1349c1e8c107095a55386628bb3b2a79422f3a2cab8381e34ce19909e0cf5064"},
+    {file = "jedi-0.15.2.tar.gz", hash = "sha256:e909527104a903606dd63bea6e8e888833f0ef087057829b89a18364a856f807"},
 ]
 jinja2 = [
     {file = "Jinja2-2.11.1-py2.py3-none-any.whl", hash = "sha256:b0eaf100007721b5c16c1fc1eecb87409464edc10469ddc9a22a27a99123be49"},
@@ -1189,6 +1236,14 @@ python-dateutil = [
     {file = "python-dateutil-2.8.1.tar.gz", hash = "sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c"},
     {file = "python_dateutil-2.8.1-py2.py3-none-any.whl", hash = "sha256:75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"},
 ]
+python-jsonrpc-server = [
+    {file = "python-jsonrpc-server-0.3.4.tar.gz", hash = "sha256:c73bf5495c9dd4d2f902755bedeb6da5afe778e0beee82f0e195c4655352fe37"},
+    {file = "python_jsonrpc_server-0.3.4-py3-none-any.whl", hash = "sha256:1f85f75f37f923149cc0aa078474b6df55b708e82ed819ca8846a65d7d0ada7f"},
+]
+python-language-server = [
+    {file = "python-language-server-0.31.9.tar.gz", hash = "sha256:b11b4991f488a235086c5fea86799ee9e4dc52a6316fa186d6d0e0c99e654292"},
+    {file = "python_language_server-0.31.9-py3-none-any.whl", hash = "sha256:5c6963706c6d5ac19f11a86efacd897659e0959db3ac0fc991dd9297a37d27cb"},
+]
 python-magic = [
     {file = "python-magic-0.4.15.tar.gz", hash = "sha256:f3765c0f582d2dfc72c15f3b5a82aecfae9498bd29ca840d72f37d7bd38bfcd5"},
     {file = "python_magic-0.4.15-py2.py3-none-any.whl", hash = "sha256:f2674dcfad52ae6c49d4803fa027809540b130db1dec928cfbb9240316831375"},
@@ -1246,6 +1301,9 @@ soupsieve = [
 traitlets = [
     {file = "traitlets-4.3.3-py2.py3-none-any.whl", hash = "sha256:70b4c6a1d9019d7b4f6846832288f86998aa3b9207c6821f3578a6a6a467fe44"},
     {file = "traitlets-4.3.3.tar.gz", hash = "sha256:d023ee369ddd2763310e4c3eae1ff649689440d4ae59d7485eb4cfbbe3e359f7"},
+]
+ujson = [
+    {file = "ujson-1.35.tar.gz", hash = "sha256:f66073e5506e91d204ab0c614a148d5aa938bdbf104751be66f8ad7a222f5f86"},
 ]
 uritemplate = [
     {file = "uritemplate-3.0.1-py2.py3-none-any.whl", hash = "sha256:07620c3f3f8eed1f12600845892b0e036a2420acf513c53f7de0abd911a5894f"},
