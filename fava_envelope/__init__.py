@@ -46,7 +46,6 @@ class EnvelopeBudget(FavaExtensionBase):
             row["To be budgeted for month"] = income_tables[month]["To Be Budgeted"]
             income_table_rows.append(row)
 
-
             envelope_table_rows = []
             for index, e_row in envelope_tables.iterrows():
                 row = {}
