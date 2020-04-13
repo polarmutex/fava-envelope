@@ -1,50 +1,71 @@
 """
 """
 
-# Debug
-try:
-    import ipdb
-    #ipdb.set_trace()
-except ImportError:
-    pass
-
 from fava.ext import FavaExtensionBase
 from beancount.core.number import Decimal, D
 
-from .modules import beancount_envelope
+from .modules.beancount_envelope import BeancountEnvelope
+
 
 class EnvelopeBudget(FavaExtensionBase):
     '''
     '''
     report_title = "Envelope Budget"
 
-    def build_envelop_budget_table(self, begin=None, end=None):
-        activity = beancount_envelope.envelope_tables(
-            self.ledger,
-            self.config.get('start_date'),
-            self.config.get('budget_accounts'),
-            self.config.get('mappings'),
+    def build_envelope_budget_tables(self, begin=None, end=None):
+        module = BeancountEnvelope(
+            self.ledger.entries,
+            self.ledger.options
         )
-        return self.generate_envelope_query_table(activity)
+        income_tables, envelope_tables = module.envelope_tables()
+        return self.generate_envelope_query_table(
+            income_tables, envelope_tables)
 
-    def generate_envelope_query_table(self, activity):
-        account_type = ("Account", str(str))
-        budgeted_type = ("Budgeted", str(Decimal))
-        activity_type = ("Activity", str(Decimal))
-        available_type = ("Available", str(Decimal))
-        types = [account_type, budgeted_type, activity_type, available_type]
+    def generate_envelope_query_table(self, income_tables, envelope_tables):
 
-        activity_header = activity[0]
-        activity_rows = activity[1]
+        tables = []
 
-        rows = []
-        for act_row in activity_rows:
+        income_table_types = []
+        income_table_types.append(("Funds for mmonth", str(Decimal)))
+        income_table_types.append(("Overspent in prev month", str(Decimal)))
+        income_table_types.append(("Budgeted for month", str(Decimal)))
+        income_table_types.append(("To be budgeted for month", str(Decimal)))
+
+        envelope_table_types = []
+        envelope_table_types.append(("Account", str(str)))
+        envelope_table_types.append(("Budgeted", str(Decimal)))
+        envelope_table_types.append(("Activity", str(Decimal)))
+        envelope_table_types.append(("Available", str(Decimal)))
+
+        income_table_rows = []
+        for month in income_tables.columns:
             row = {}
-            row["Account"] = act_row[0]
-            row["Budgeted"] = Decimal(0.00)
-            row["Activity"] = D(act_row[1])
-            row["Available"] = Decimal(0.00)
-            rows.append(row)
+            row["Funds for month"] = income_tables[month]["Avail Income"]
+            row["Overspent in prev month"] = income_tables[month]["Overspent"]
+            row["Budgeted for month"] = income_tables[month]["Budgeted"]
+            row["To be budgeted for month"] = income_tables[month]["To Be Budgeted"]
+            income_table_rows.append(row)
 
-        return types, rows
 
+            envelope_table_rows = []
+            for index, e_row in envelope_tables.iterrows():
+                row = {}
+                row["Account"] = index
+                row["Budgeted"] = e_row[month, "budgeted"]
+                row["Activity"] = e_row[month, "activity"]
+                row["Available"] = e_row[month, "available"]
+                envelope_table_rows.append(row)
+
+            tables.append((
+                month,
+                {
+                    "income_table": (
+                        income_table_types,
+                        income_table_rows),
+                    "envelope_table": (
+                        envelope_table_types,
+                        envelope_table_rows)
+                }
+            ))
+
+        return tables

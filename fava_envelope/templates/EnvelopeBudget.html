@@ -3,6 +3,14 @@
 <i>Envelope Budget: </i>
 
 <h2>Envelope Budget</h2>
-{% set budget_table = extension.build_envelop_budget_table(None, None) %}
-{{ querytable.querytable(None, *budget_table) }}
-<br/>
+{% set tables = extension.build_envelope_budget_tables(None, None) %}
+
+<div class="row">
+    {% for key, month_tables in tables %}
+    <div class="column">
+        <h3>{{ key }}</h3>
+        <!--{{ querytable.querytable(None, *month_tables.income_table) }}
+            {{ querytable.querytable(None, *month_tables.envelope_table) }}-->
+    </div>
+    {% endfor %}
+</div>
