@@ -7,6 +7,12 @@ A beancount fava extension to add a envelope budgeting capability to fava and be
 python install fava-envelope
 ```
 
+## TODO
+
+* add example file for screenshots and testing
+* Add testing
+* add charts
+
 ## Running fava-envelope
 
 ## Load the Extension

@@ -85,8 +85,6 @@ class BeancountEnvelope:
         self._calculate_budget_activity()
         self._calc_budget_budgeted()
 
-        breakpoint()
-
         # Calculate Starting Balance Income
         starting_balance = Decimal(0.0)
         query_str = f"select account, convert(sum(position),'USD') from close on {months[0]}-01 group by 1 order by 1;"

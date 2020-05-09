@@ -6,7 +6,7 @@ with open(path.join(path.dirname(__file__), 'README.md')) as readme:
 
 setup(
     name='fava-envelope',
-    version='1.0',
+    version='0.1',
     description='Fava Envelope budgeting for beancout',
     long_description=LONG_DESCRIPTION,
     url='https://github.com/bryall/fava-envelope',
