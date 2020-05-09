@@ -6,19 +6,20 @@ with open(path.join(path.dirname(__file__), 'README.md')) as readme:
 
 setup(
     name='fava-envelope',
-    version='1.0',
+    version='0.1',
     description='Fava Envelope budgeting for beancout',
     long_description=LONG_DESCRIPTION,
     url='https://github.com/bryall/fava-envelope',
     author='Brian RYall',
-    author_email='bryall@gmail.com',
+    author_email='bryall@users.noreply.github.com',
     license='MIT',
     keywords='fava beancount accounting budgeting',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
         'beancount>=2.2.3',
-        'fava>=1.13'
+        'fava>=1.13',
+        'pandas>=1.0.0'
     ],
     zip_safe=False,
     classifiers=[

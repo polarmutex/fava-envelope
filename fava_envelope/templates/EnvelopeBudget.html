@@ -1,5 +1,21 @@
 {% import "_query_table.html" as querytable with context %}
 
-<i>Envelope Budget: </i>
+<i>Envelope Budget</i>
 
-<h2>Envelope Budget</h2>
+{% set month = request.args.get('month') %}
+{% if month == None%}
+{% set month = extension.get_budgets_months_available()[-1] %}
+{% endif %}
+<div class="headerline">
+  {% for m in extension.get_budgets_months_available() %}
+  <h3><b>{% if not (module == m) %}<a href="{{ url_for_current(month=m) }}">{{ m }}</a>{% else %} {{ m }}{% endif %}</b></h3>
+  {% endfor %}
+</div>
+
+<h3>{{ month }}</h3>
+
+{% set income_table = extension.generate_income_query_tables(month) %}
+{{ querytable.querytable(None, income_table[0], income_table[1]) }}
+
+{% set envelope_table = extension.generate_envelope_query_tables(month) %}
+{{ querytable.querytable(None, envelope_table[0], envelope_table[1]) }}

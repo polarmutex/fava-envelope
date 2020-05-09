@@ -8,9 +8,11 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.7"
 fava = "^1.14"
+pandas = "^1.0.3"
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.2"
+jedi = "^0.17.0"
 
 [build-system]
 requires = ["poetry>=0.12"]
