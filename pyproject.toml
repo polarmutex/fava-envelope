@@ -9,14 +9,10 @@ license = "MIT"
 python = "^3.7"
 fava = "^1.14"
 pandas = "^1.0.3"
-python-language-server = "^0.31.9"
-flake8 = "^3.7.9"
-pydocstyle = "^5.0.2"
-black = "^19.10b0"
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.2"
-python-language-server = "^0.31.9"
+jedi = "^0.17.0"
 
 [build-system]
 requires = ["poetry>=0.12"]

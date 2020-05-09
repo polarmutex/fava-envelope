@@ -11,7 +11,7 @@ setup(
     long_description=LONG_DESCRIPTION,
     url='https://github.com/bryall/fava-envelope',
     author='Brian RYall',
-    author_email='bryall@gmail.com',
+    author_email='bryall@users.noreply.github.com',
     license='MIT',
     keywords='fava beancount accounting budgeting',
     packages=find_packages(),
