@@ -32,7 +32,7 @@ start date in the format <4 digit year>-<2 digit month>
 ```
 
 ## Set up Budget Accounts
-You will need to specify the Assets and Liabiities you want included in your budget (For example ignoring Investment accounts). you can use regular expression in these statements
+You will need to specify the Assets and Liabilities you want included in your budget (For example ignoring Investment accounts). you can use regular expression in these statements
 ```
 2020-01-01 custom "envelope" "budget account" "Assets:Checking"
 2020-01-01 custom "envelope" "budget account" "Liabilities:Credit-Cards:*"
@@ -44,7 +44,7 @@ By default fava-envelope will use the Assets/Liabilities/Income/Expenses buckets
 2020-01-01 custom "envelope" "mapping" "Expenses:Food:*" "Expenses:Food"
 ```
 
-### ALlocate money to a bucket
+### Allocate money to a bucket
 ```
 2020-01-31 custom "envelope" "allocate" "Expenses:Food" 100.00
 ```
