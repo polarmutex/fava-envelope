@@ -223,6 +223,7 @@ class BeancountEnvelope:
         # Pivot the table
         header_months = sorted(all_months)
         header = ['account'] + ['{}-{:02d}'.format(*m) for m in header_months]
+        self.income_df.loc["Avail Income", :] = Decimal(0.00)
 
         for account in sorted(sbalances.keys()):
             for month in header_months:
