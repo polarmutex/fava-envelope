@@ -27,6 +27,7 @@ class BeancountEnvelope:
 
         self.entries = entries
         self.options_map = options_map
+        self.currency = self._find_currency(options_map)
         self.start_date, self.budget_accounts, self.mappings = self._find_envelop_settings()
 
         decimal_precison = '0.00'
@@ -42,6 +43,18 @@ class BeancountEnvelope:
 
         self.price_map = prices.build_price_map(entries)
         self.acctypes = options.get_account_types(options_map)
+
+
+    def _find_currency(self, options_map):
+        default_currency = 'USD'
+        opt_currency = options_map.get("operating_currency")
+        currency = opt_currency[0] if opt_currency else default_currency
+        if len(currency) == 3:
+            return currency
+
+        logging.warning(f"invalid operating currency: {currency}, defaulting to {default_currency}")
+        return default_currency
+
 
     def _find_envelop_settings(self):
         start_date = None
@@ -87,7 +100,7 @@ class BeancountEnvelope:
 
         # Calculate Starting Balance Income
         starting_balance = Decimal(0.0)
-        query_str = f"select account, convert(sum(position),'USD') from close on {months[0]}-01 group by 1 order by 1;"
+        query_str = f"select account, convert(sum(position),'{self.currency}') from close on {months[0]}-01 group by 1 order by 1;"
         rows = query.run_query(self.entries, self.options_map, query_str, numberify=True)
         for row in rows[1]:
             if any(regexp.match(row[0]) for regexp in self.budget_accounts):
@@ -191,7 +204,7 @@ class BeancountEnvelope:
                         break
 
                 account_type = account_types.get_account_type(account)
-                if posting.units.currency != "USD":
+                if posting.units.currency != self.currency:
                     continue
 
                 if account_type == self.acctypes.income:
@@ -211,7 +224,7 @@ class BeancountEnvelope:
                 date = datetime.date(year, mth, 1)
                 balance = balance.reduce(convert.get_value, self.price_map, date)
                 balance = balance.reduce(
-                    convert.convert_position, "USD", self.price_map, date)
+                    convert.convert_position, self.currency, self.price_map, date)
                 try:
                     pos = balance.get_only_position()
                 except AssertionError:
