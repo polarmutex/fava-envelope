@@ -36,7 +36,7 @@ class BeancountEnvelope:
         # Compute start of period
         # TODO get start date from journal
         today = datetime.date.today()
-        self.date_start = datetime.date(2020,1,1)
+        self.date_start = datetime.datetime.strptime(self.start_date, '%Y-%m').date()
 
         # Compute end of period
         self.date_end = datetime.date(today.year, today.month, today.day)
