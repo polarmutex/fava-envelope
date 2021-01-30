@@ -1,20 +1,36 @@
 [tool.poetry]
 name = "fava-envelope"
-version = "0.1.0"
-description = ""
-authors = ["Brian Ryall <brianryall@fastmail.com>"]
+version = "0.5.1"
+description = "Fava Envelope budgeting for beancount"
+authors = ["Brian Ryall <bryall@users.noreply.github.com>"]
+homepage = 'https://github.com/bryall/fava-envelope',
+keywords = [
+    "fava",
+    "beancount",
+    "budgeting",
+    "accounting"
+]
+classifiers=[
+    'Development Status :: 3 - Alpha',
+    'Intended Audience :: Financial and Insurance Industry',
+    'License :: OSI Approved :: MIT License',
+    'Natural Language :: English',
+    'Programming Language :: Python :: 3 :: Only',
+    'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+    'Topic :: Office/Business :: Financial :: Accounting'
+]
 license = "MIT"
+packages = [
+    { include = "fava_envelope" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.7"
 fava = "^1.14"
-pandas = "^1.0.3"
+pandas = "^1.2.1"
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.2"
-jedi = "^0.17.0"
-setuptools = "^46.1.3"
-wheel = "^0.34.2"
 twine = "^3.1.1"
 
 [build-system]
