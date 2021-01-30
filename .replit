@@ -1,0 +1,2 @@
+language = "python3"
+run = "fava -H 0.0.0.0 example.beancount"
