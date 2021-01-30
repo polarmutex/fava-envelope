@@ -2,6 +2,18 @@
 
 A beancount fava extension to add a envelope budgeting capability to fava and beancount. It is developed as an fava plugin and CLI.
 
+![PyPI](https://img.shields.io/pypi/v/fava-envelope?color=success&label=pypi%20package)
+![GitHub last commit](https://img.shields.io/github/last-commit/bryall/fava-envelope)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Run on Repl.it](https://repl.it/badge/github/bryall/fava-envelope)](https://repl.it/github/bryall/fava-envelope)
+
+## Repl.it
+Click the repl.it link to be able to see the plugin in action
+1. Click the link
+2. Click Run
+3. When the web pane opens, click the open in new tab ( have not figurec ouf why it is not showing in the initial window )
+4. Click the "Fava Envelope" link in fava to see the plugin
+
 ## Installation via pip
 ```
 python install fava-envelope
