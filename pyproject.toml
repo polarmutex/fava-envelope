@@ -3,7 +3,7 @@ name = "fava-envelope"
 version = "0.5.1"
 description = "Fava Envelope budgeting for beancount"
 authors = ["Brian Ryall <bryall@users.noreply.github.com>"]
-homepage = 'https://github.com/bryall/fava-envelope',
+homepage = 'https://github.com/bryall/fava-envelope'
 keywords = [
     "fava",
     "beancount",
