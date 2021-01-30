@@ -38,6 +38,8 @@ class BeancountEnvelope:
         today = datetime.date.today()
         self.date_start = datetime.datetime.strptime(self.start_date, '%Y-%m').date()
 
+        # TODO should be able to assert errors
+
         # Compute end of period
         self.date_end = datetime.date(today.year, today.month, today.day)
 
