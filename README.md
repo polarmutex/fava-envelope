@@ -33,7 +33,7 @@ Add this to your beancount journal, and start fava as normal
 2000-01-01 custom "fava-extension" "fava_envelope" "{}"
 ```
 
-You should now see 'Envelope' in your fava window
+You should now see 'Envelope' in your fava window. You must set up a budget (see below), or else Fava will report a 404 error.
 
 ## Setting up budget
 
