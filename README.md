@@ -16,7 +16,7 @@ Click the repl.it link to be able to see the plugin in action
 
 ## Installation via pip
 ```
-python install fava-envelope
+python -m pip install fava-envelope
 ```
 
 ## TODO
