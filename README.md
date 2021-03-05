@@ -61,3 +61,10 @@ By default fava-envelope will use the Assets/Liabilities/Income/Expenses buckets
 2020-01-31 custom "envelope" "allocate" "Expenses:Food" 100.00
 ```
 
+### Set up operating currency
+The envelopes will read the operating currency from the core beancount option.
+```
+option "operating_currency" "EUR"
+```
+It will default to USD if this option is not set. Only a single currency is supported for the budget. 
+
