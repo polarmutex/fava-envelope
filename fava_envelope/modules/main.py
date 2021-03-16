@@ -1,10 +1,5 @@
 import argparse
 import logging
-try:
-    import ipdb
-    #ipdb.set_trace()
-except ImportError:
-    pass
 
 from beancount import loader
 
@@ -13,7 +8,7 @@ from fava_envelope.modules.beancount_envelope import BeancountEnvelope
 def main():
     logging.basicConfig(level=logging.INFO,
                         format='%(levelname)-8s: %(message)s')
-    parser = argparse.ArgumentParser(description="beancount_envelope")
+    parser = argparse.ArgumentParser(description='beancount_envelope')
     parser.add_argument('filename', help='path to beancount journal file')
     args = parser.parse_args()
 

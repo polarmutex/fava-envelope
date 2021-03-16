@@ -1,9 +1,3 @@
-# Debug
-try:
-    import ipdb
-except ImportError:
-    pass
-
 import datetime
 import collections
 import logging
@@ -49,12 +43,12 @@ class BeancountEnvelope:
 
     def _find_currency(self, options_map):
         default_currency = 'USD'
-        opt_currency = options_map.get("operating_currency")
+        opt_currency = options_map.get('operating_currency')
         currency = opt_currency[0] if opt_currency else default_currency
         if len(currency) == 3:
             return currency
 
-        logging.warning(f"invalid operating currency: {currency}, defaulting to {default_currency}")
+        logging.warning(f'invalid operating currency: {currency}, defaulting to {default_currency}')
         return default_currency
 
 
@@ -64,12 +58,12 @@ class BeancountEnvelope:
         mappings = []
 
         for e in self.entries:
-            if isinstance(e, Custom) and e.type == "envelope":
-                if e.values[0].value == "start date":
+            if isinstance(e, Custom) and e.type == 'envelope':
+                if e.values[0].value == 'start date':
                     start_date = e.values[1].value
-                if e.values[0].value == "budget account":
+                if e.values[0].value == 'budget account':
                     budget_accounts.append(re.compile(e.values[1].value))
-                if e.values[0].value == "mapping":
+                if e.values[0].value == 'mapping':
                     map_set = (
                         re.compile(e.values[1].value),
                         e.values[2].value
@@ -82,7 +76,7 @@ class BeancountEnvelope:
         months = []
         date_current = self.date_start
         while date_current < self.date_end:
-            months.append(f"{date_current.year}-{str(date_current.month).zfill(2)}")
+            months.append(f'{date_current.year}-{str(date_current.month).zfill(2)}')
             month = date_current.month - 1 + 1
             year = date_current.year + month // 12
             month = month % 12  + 1
@@ -95,7 +89,7 @@ class BeancountEnvelope:
         # Create Envelopes DataFrame
         column_index = pd.MultiIndex.from_product([months, ['budgeted', 'activity', 'available']], names=['Month','col'])
         self.envelope_df = pd.DataFrame(columns=column_index)
-        self.envelope_df.index.name = "Envelopes"
+        self.envelope_df.index.name = 'Envelopes'
 
         self._calculate_budget_activity()
         self._calc_budget_budgeted()
@@ -108,7 +102,7 @@ class BeancountEnvelope:
             if any(regexp.match(row[0]) for regexp in self.budget_accounts):
                 if row[1] is not None:
                     starting_balance += row[1]
-        self.income_df[months[0]]["Avail Income"] += starting_balance
+        self.income_df[months[0]]['Avail Income'] += starting_balance
 
         self.envelope_df.fillna(Decimal(0.00), inplace=True)
 
@@ -127,17 +121,17 @@ class BeancountEnvelope:
         # Set overspent
         for index, month in enumerate(months):
             if index == 0:
-                self.income_df.loc["Overspent", month] = Decimal(0.00)
+                self.income_df.loc['Overspent', month] = Decimal(0.00)
             else:
                 overspent = Decimal(0.00)
                 for index2, row in self.envelope_df.iterrows():
                     if row[months[index-1],'available'] < Decimal(0.00):
                         overspent += Decimal(row[months[index-1], 'available'])
-                self.income_df.loc["Overspent", month] = overspent
+                self.income_df.loc['Overspent', month] = overspent
 
         # Set Budgeted for month
         for month in months:
-            self.income_df.loc["Budgeted",month] = Decimal(-1 * self.envelope_df[month,'budgeted'].sum())
+            self.income_df.loc['Budgeted',month] = Decimal(-1 * self.envelope_df[month,'budgeted'].sum())
 
         # Adjust Avail Income
         for index, month in enumerate(months):
@@ -145,28 +139,28 @@ class BeancountEnvelope:
                 continue
             else:
                 prev_month = months[index-1]
-                self.income_df.loc["Avail Income", month] = \
-                    self.income_df.loc["Avail Income",month] + \
-                    self.income_df.loc["Avail Income", prev_month] + \
-                    self.income_df.loc["Overspent", prev_month] + \
-                    self.income_df.loc["Budgeted", prev_month]
+                self.income_df.loc['Avail Income', month] = \
+                    self.income_df.loc['Avail Income',month] + \
+                    self.income_df.loc['Avail Income', prev_month] + \
+                    self.income_df.loc['Overspent', prev_month] + \
+                    self.income_df.loc['Budgeted', prev_month]
 
         # Set Budgeted in the future
         for index, month in enumerate(months):
             sum_total = self.income_df[month].sum();
             if (index == len(months)-1) or sum_total < 0 :
-                self.income_df.loc["Budgeted Future", month] = Decimal(0.00)
+                self.income_df.loc['Budgeted Future', month] = Decimal(0.00)
             else:
                 next_month = months[index+1]
-                opp_budgeted_next_month = self.income_df.loc["Budgeted",next_month] * -1
+                opp_budgeted_next_month = self.income_df.loc['Budgeted',next_month] * -1
                 if opp_budgeted_next_month < sum_total:
-                    self.income_df.loc["Budgeted Future", month] = Decimal(-1*opp_budgeted_next_month)
+                    self.income_df.loc['Budgeted Future', month] = Decimal(-1*opp_budgeted_next_month)
                 else:
-                    self.income_df.loc["Budgeted Future", month] = Decimal(-1*sum_total)
+                    self.income_df.loc['Budgeted Future', month] = Decimal(-1*sum_total)
 
         # Set to be budgeted
         for index, month in enumerate(months):
-            self.income_df.loc["To Be Budgeted", month] = Decimal(self.income_df[month].sum())
+            self.income_df.loc['To Be Budgeted', month] = Decimal(self.income_df[month].sum())
 
         return self.income_df, self.envelope_df
 
@@ -210,7 +204,7 @@ class BeancountEnvelope:
                     continue
 
                 if account_type == self.acctypes.income:
-                    account = "Income"
+                    account = 'Income'
                 elif any(regexp.match(posting.account) for regexp in self.budget_accounts):
                     continue
                 # TODO WARn of any assets / liabilities left
@@ -238,7 +232,7 @@ class BeancountEnvelope:
         # Pivot the table
         header_months = sorted(all_months)
         header = ['account'] + ['{}-{:02d}'.format(*m) for m in header_months]
-        self.income_df.loc["Avail Income", :] = Decimal(0.00)
+        self.income_df.loc['Avail Income', :] = Decimal(0.00)
 
         for account in sorted(sbalances.keys()):
             for month in header_months:
@@ -247,9 +241,9 @@ class BeancountEnvelope:
                 # swap sign to be more human readable
                 temp *= -1
 
-                month_str = f"{str(month[0])}-{str(month[1]).zfill(2)}"
-                if account == "Income":
-                    self.income_df.loc["Avail Income",month_str] = Decimal(temp)
+                month_str = f'{str(month[0])}-{str(month[1]).zfill(2)}'
+                if account == 'Income':
+                    self.income_df.loc['Avail Income',month_str] = Decimal(temp)
                 else:
                     self.envelope_df.loc[account,(month_str,'budgeted')] = Decimal(0.00)
                     self.envelope_df.loc[account,(month_str,'activity')] = Decimal(temp)
@@ -258,7 +252,7 @@ class BeancountEnvelope:
     def _calc_budget_budgeted(self):
         rows = {}
         for e in self.entries:
-            if isinstance(e, Custom) and e.type == "envelope":
-                if e.values[0].value == "allocate":
-                    month = f"{e.date.year}-{e.date.month:02}"
+            if isinstance(e, Custom) and e.type == 'envelope':
+                if e.values[0].value == 'allocate':
+                    month = f'{e.date.year}-{e.date.month:02}'
                     self.envelope_df.loc[e.values[1].value,(month,'budgeted')] = Decimal(e.values[2].value)
