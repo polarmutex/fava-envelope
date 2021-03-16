@@ -11,12 +11,6 @@ repos:
     -   id: name-tests-test
     -   id: requirements-txt-fixer
 
--   repo: https://gitlab.com/pycqa/flake8
-    rev: 3.9.0
-    hooks:
-    -   id: flake8
-        additional_dependencies: [flake8-typing-imports==1.10.0]
-
 -   repo: https://github.com/psf/black
     rev: 20.8b1
     hooks:
@@ -41,3 +35,15 @@ repos:
     hooks:
     -   id: add-trailing-comma
         args: [--py36-plus]
+
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.812
+    hooks:
+    - id: mypy
+      exclude: ^(docs/|tests)
+
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.9.0
+    hooks:
+    -   id: flake8
+        additional_dependencies: [flake8-typing-imports==1.10.0]
