@@ -32,31 +32,31 @@ class EnvelopeBudget(FavaExtensionBase):
                 {
                     "Name": "Funds for month",
                     "Amount": self.income_tables[month]["Avail Income"],
-                }
+                },
             )
             income_table_rows.append(
                 {
                     "Name": "Overspent in prev month",
                     "Amount": self.income_tables[month]["Overspent"],
-                }
+                },
             )
             income_table_rows.append(
                 {
                     "Name": "Budgeted for month",
                     "Amount": self.income_tables[month]["Budgeted"],
-                }
+                },
             )
             income_table_rows.append(
                 {
                     "Name": "To be budgeted for month",
                     "Amount": self.income_tables[month]["To Be Budgeted"],
-                }
+                },
             )
             income_table_rows.append(
                 {
                     "Name": "Budgeted in the future",
                     "Amount": self.income_tables[month]["Budgeted Future"],
-                }
+                },
             )
 
         return (income_table_types, income_table_rows)
