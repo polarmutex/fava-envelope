@@ -1,0 +1,18 @@
+[flake8]
+max-line-length = 88
+max-complexity = 25
+exclude =
+    .git
+    __pycache__
+    setup.py
+    build
+    dist
+    releases
+    docs
+    .eggs
+    .venv
+    .tox
+    .mypy_cache
+    .pytest_cache
+    .vscode
+    .github

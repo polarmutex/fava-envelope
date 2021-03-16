@@ -29,6 +29,7 @@ python = "^3.6.1"
 fava = "^1.14"
 pandas = "^1.1"
 pre-commit = "^2.11.1"
+flake8 = "^3.9.0"
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.2"
