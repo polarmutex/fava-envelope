@@ -11,6 +11,11 @@ repos:
     -   id: name-tests-test
     -   id: requirements-txt-fixer
 
+-   repo: https://gitlab.com/smop/pre-commit-hooks
+    rev: v1.0.0
+    hooks:
+    -   id: check-poetry
+
 -   repo: https://github.com/psf/black
     rev: 20.8b1
     hooks:
@@ -19,7 +24,7 @@ repos:
         files: ^fava_envelope/
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v2.10.0
+    rev: v2.10.1
     hooks:
     -   id: pyupgrade
         args: [--py36-plus]
