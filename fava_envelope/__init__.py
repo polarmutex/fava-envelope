@@ -34,7 +34,6 @@ class EnvelopeBudget(FavaExtensionBase):
         
     
     def get_currencies(self):
-        titles=[]
         try:
             return self.config["currencies"]
         except:
