@@ -1,17 +1,29 @@
 {% import "_query_table.html" as querytable with context %}
-
-<i>Envelope Budget</i>
-
-{% set month = request.args.get('month') %}
-{% if month == None%}
-{% set month = extension.get_budgets_months_available()[-1] %}
+{% set currency = request.args.get('currency') %}
+{% if currency == None%}
+{% set currency = extension.get_currencies()[0]%}
 {% endif %}
+{% if extension.check_month_in_available_months(request.args.get('month'),currency) %}
+{% set month = request.args.get('month') %}
+{% endif %}
+{% if not month%}
+{% set month = extension.get_budgets_months_available(currency)[-1] %}
+{% endif %}
+{% if extension.get_currencies() %}
 <div class="headerline">
-  {% for m in extension.get_budgets_months_available() %}
-  <h3><b>{% if not (module == m) %}<a href="{{ url_for_current(month=m) }}">{{ m }}</a>{% else %} {{ m }}{% endif %}</b></h3>
+  {% for c in extension.get_currencies() %}
+  <h3><b>{% if not (currency == c) %}<a href="{{ url_for_current(month=month,currency=c) }}">Envelope Budget {{ c }}</a>{% else %}Envelope Budget {{ c }}{% endif %}</b></h3>
   {% endfor %}
 </div>
+{% endif %}
 
+<h3>{{ title }}</h3>
+
+<div class="headerline">
+  {% for m in extension.get_budgets_months_available(currency) %}
+  <h3><b>{% if not (module == m) %}<a href="{{ url_for_current(month=m,currency=currency) }}">{{ m }}</a>{% else %} {{ m }}{% endif %}</b></h3>
+  {% endfor %}
+</div>
 <h3>{{ month }}</h3>
 
 {% set income_table = extension.generate_income_query_tables(month) %}

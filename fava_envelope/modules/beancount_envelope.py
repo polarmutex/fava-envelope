@@ -17,18 +17,27 @@ from beancount.core import prices
 from beancount.core import convert
 from beancount.core import inventory
 from beancount.core import account_types
+from beancount.core import amount
 from beancount.query import query
 from beancount.core.data import Custom
 from beancount.parser import options
 
 class BeancountEnvelope:
 
-    def __init__(self, entries, options_map):
+    def __init__(self, entries, options_map,currency):
 
         self.entries = entries
         self.options_map = options_map
-        self.currency = self._find_currency(options_map)
-        self.start_date, self.budget_accounts, self.mappings = self._find_envelop_settings()
+        self.currency = currency
+        if self.currency:
+            self.etype="envelope"+self.currency
+        else:
+            self.etype="envelope"
+
+        self.start_date, self.budget_accounts, self.mappings, self.income_accounts = self._find_envelop_settings()
+
+        if not self.currency:
+            self.currency=self._find_currency(options_map)
 
         decimal_precison = '0.00'
         self.Q = Decimal(decimal_precison)
@@ -62,9 +71,10 @@ class BeancountEnvelope:
         start_date = None
         budget_accounts= []
         mappings = []
+        income_accounts = []
 
         for e in self.entries:
-            if isinstance(e, Custom) and e.type == "envelope":
+            if isinstance(e, Custom) and e.type == self.etype:
                 if e.values[0].value == "start date":
                     start_date = e.values[1].value
                 if e.values[0].value == "budget account":
@@ -75,7 +85,11 @@ class BeancountEnvelope:
                         e.values[2].value
                     )
                     mappings.append(map_set)
-        return start_date, budget_accounts, mappings
+                if e.values[0].value == "income account":
+                    income_accounts.append(re.compile(e.values[1].value))
+                if e.values[0].value == "currency":
+                    self.currency = e.values[1].value
+        return start_date, budget_accounts, mappings, income_accounts
 
     def envelope_tables(self):
 
@@ -168,7 +182,7 @@ class BeancountEnvelope:
         for index, month in enumerate(months):
             self.income_df.loc["To Be Budgeted", month] = Decimal(self.income_df[month].sum())
 
-        return self.income_df, self.envelope_df
+        return self.income_df, self.envelope_df, self.currency
 
     def _calculate_budget_activity(self):
 
@@ -207,9 +221,15 @@ class BeancountEnvelope:
 
                 account_type = account_types.get_account_type(account)
                 if posting.units.currency != self.currency:
-                    continue
+                    orig=posting.units.number
+                    if posting.price is not None:
+                        converted=posting.price.number*orig
+                        posting=data.Posting(posting.account,amount.Amount(converted,self.currency), posting.cost, None, posting.flag,posting.meta)
+                    else:
+                        continue
 
-                if account_type == self.acctypes.income:
+                if (account_type == self.acctypes.income
+                    or (any(regexp.match(account) for regexp in self.income_accounts))):
                     account = "Income"
                 elif any(regexp.match(posting.account) for regexp in self.budget_accounts):
                     continue
@@ -258,7 +278,7 @@ class BeancountEnvelope:
     def _calc_budget_budgeted(self):
         rows = {}
         for e in self.entries:
-            if isinstance(e, Custom) and e.type == "envelope":
+            if isinstance(e, Custom) and e.type == self.etype:
                 if e.values[0].value == "allocate":
                     month = f"{e.date.year}-{e.date.month:02}"
                     self.envelope_df.loc[e.values[1].value,(month,'budgeted')] = Decimal(e.values[2].value)
