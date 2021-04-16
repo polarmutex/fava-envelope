@@ -19,11 +19,12 @@ def main():
 
     # Read beancount input file
     entries, errors, options_map = loader.load_file(args.filename)
-    ext = BeancountEnvelope(entries, options_map)
-    df1, df2 = ext.envelope_tables()
+    ext = BeancountEnvelope(entries, options_map, None)
+    df1, df2, df3 = ext.envelope_tables()
     #logging.info(df)
     print(df1)
     print(df2)
+    print(df3)
 
 
 if __name__ == '__main__':
