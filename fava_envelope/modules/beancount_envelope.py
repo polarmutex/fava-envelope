@@ -203,6 +203,7 @@ class BeancountEnvelope:
         )
         all_months = set()
 
+        # should try to use data.iter_entry_dates(entries, date_begin, date_end)
         for entry in data.filter_txns(self.entries):
 
             # Check entry in date range
@@ -283,6 +284,7 @@ class BeancountEnvelope:
                 month_str = f"{str(month[0])}-{str(month[1]).zfill(2)}"
                 if account == "Income":
                     self.income_df.loc["Avail Income", month_str] = Decimal(temp)
+                    self.income_df.loc["Income", month_str] = Decimal(temp)
                 else:
                     self.envelope_df.loc[account, (month_str, "budgeted")] = Decimal(
                         0.00,
