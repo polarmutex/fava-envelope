@@ -5,24 +5,41 @@ from fava.ext import FavaExtensionBase
 from beancount.core.number import Decimal, D
 
 from .modules.beancount_envelope import BeancountEnvelope
-
+import ast
 
 class EnvelopeBudget(FavaExtensionBase):
     '''
     '''
     report_title = "Envelope Budget"
 
-    def generate_budget_df(self):
+    def generate_budget_df(self,currency):
+        self.currency=currency
         module = BeancountEnvelope(
             self.ledger.entries,
-            self.ledger.options
+            self.ledger.options,
+            self.currency
         )
-        self.income_tables, self.envelope_tables = module.envelope_tables()
+        self.income_tables, self.envelope_tables, self.currency = module.envelope_tables()
 
-    def get_budgets_months_available(self):
-        self.generate_budget_df()
+    def get_budgets_months_available(self,currency):
+        self.generate_budget_df(currency)
         return self.income_tables.columns
 
+    def check_month_in_available_months(self,month,currency):
+        if currency and month:
+            if month in self.get_budgets_months_available(currency):
+                return True
+        return False
+        
+        
+    
+    def get_currencies(self):
+        if "currencies" in self.config:
+            return self.config["currencies"]
+        else:
+            return None
+    
+    
     def generate_income_query_tables(self, month):
 
         income_table_types = []
