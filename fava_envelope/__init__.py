@@ -2,6 +2,7 @@
 """
 
 from fava.ext import FavaExtensionBase
+from fava import __version__ as fava_version
 from beancount.core.number import Decimal, D
 
 from .modules.beancount_envelope import BeancountEnvelope
@@ -93,3 +94,17 @@ class EnvelopeBudget(FavaExtensionBase):
                 envelope_table_rows.append(row)
 
         return (envelope_table_types, envelope_table_rows)
+
+    def use_new_querytable(self):
+        """
+        from redstreet/fava_investor
+        fava added the ledger as a first required argument to
+        querytable.querytable after version 1.18, so in order to support both,
+        we have to detect the version and adjust how we call it from inside our
+        template
+        """
+        split_version = fava_version.split('.')
+        if len(split_version) != 2:
+            split_version = split_version[:2]
+        major, minor = split_version
+        return int(major) > 1 or (int(major) == 1 and int(minor) > 18)
