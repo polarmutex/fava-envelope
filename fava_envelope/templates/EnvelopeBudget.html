@@ -1,3 +1,4 @@
+{% set new_querytable = extension.use_new_querytable() %}
 {% import "_query_table.html" as querytable with context %}
 {% set currency = request.args.get('currency') %}
 {% if currency == None%}
@@ -27,7 +28,15 @@
 <h3>{{ month }}</h3>
 
 {% set income_table = extension.generate_income_query_tables(month) %}
+{% if new_querytable %}
+{{ querytable.querytable(ledger, None, income_table[0], income_table[1]) }}
+{% else %}
 {{ querytable.querytable(None, income_table[0], income_table[1]) }}
+{% endif %}
 
 {% set envelope_table = extension.generate_envelope_query_tables(month) %}
+{% if new_querytable %}
+{{ querytable.querytable(ledger, None, envelope_table[0], envelope_table[1]) }}
+{% else %}
 {{ querytable.querytable(None, envelope_table[0], envelope_table[1]) }}
+{% endif %}
