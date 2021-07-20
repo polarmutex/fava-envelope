@@ -32,5 +32,5 @@ jobs:
       - name: Build
         run: poetry build
       - name: Publish to PyPI (release only)
-        if: github.event_name == 'release' && matrix.python-version == '3.8'
+        if: github.event_name == 'release' && matrix.python-version == '3.7'
         run: poetry publish -u __token__ -p ${{ secrets.PYPI_TOKEN }}
