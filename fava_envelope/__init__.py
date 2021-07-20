@@ -72,11 +72,10 @@ class EnvelopeBudget(FavaExtensionBase):
                 "Amount":  self.income_tables[month]["Budgeted Future"]
             })
 
-        return (income_table_types, income_table_rows)
+        return income_table_types, income_table_rows
 
     def generate_envelope_query_tables(self, month):
 
-        print(month)
         envelope_table_types = []
         envelope_table_types.append(("Account", str(str)))
         envelope_table_types.append(("Budgeted", str(Decimal)))
@@ -94,7 +93,7 @@ class EnvelopeBudget(FavaExtensionBase):
                 row["Available"] = e_row[month, "available"]
                 envelope_table_rows.append(row)
 
-        return (envelope_table_types, envelope_table_rows)
+        return envelope_table_types, envelope_table_rows
 
     def use_new_querytable(self):
         """
