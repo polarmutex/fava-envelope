@@ -8,9 +8,11 @@ option "title" "Huge Example file"
 option "operating_currency" "USD"
 
 2010-01-01 custom "fava-extension" "fava_envelope" "{}"
+
 2010-01-01 custom "envelope" "start date" "2015-01"
+
 2010-01-01 custom "envelope" "budget account" "Assets:US:BofA:Checking"
-2015-01-01 custom "envelope" "repeating" "Expenses:Financial:Fees" 4
+
 2015-01-01 custom "envelope" "allocate" "Expenses:Health:Dental:Insurance" 5.80
 2017-06-01 custom "envelope" "allocate" "Expenses:Financial:Fees" 0
 
