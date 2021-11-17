@@ -29,6 +29,8 @@ class BeancountEnvelope:
         self.entries = entries
         self.options_map = options_map
         self.currency = currency
+        self.negative_rollover = False
+
         if self.currency:
             self.etype="envelope"+self.currency
         else:
@@ -89,6 +91,9 @@ class BeancountEnvelope:
                     income_accounts.append(re.compile(e.values[1].value))
                 if e.values[0].value == "currency":
                     self.currency = e.values[1].value
+                if e.values[0].value == "negative rollover":
+                    if e.values[1].value == "allow":
+                        self.negative_rollover = True
         return start_date, budget_accounts, mappings, income_accounts
 
     def envelope_tables(self):
@@ -133,7 +138,7 @@ class BeancountEnvelope:
                     row[month, 'available'] = row[month, 'budgeted'] + row[month, 'activity']
                 else:
                     prev_available = row[months[index2-1],'available']
-                    if prev_available > 0:
+                    if prev_available > 0 or self.negative_rollover:
                         row[month, 'available'] = prev_available + row[month, 'budgeted'] + row[month, 'activity']
                     else:
                         row[month, 'available'] = row[month, 'budgeted'] + row[month, 'activity']
