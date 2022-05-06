@@ -43,6 +43,13 @@ start date in the format <4 digit year>-<2 digit month>
 2020-01-01 custom "envelope" "start date" "2020-01"
 ```
 
+### Budget months ahead
+If you want to see future months (to budget ahead), set this parameter
+```
+2020-01-01 custom "envelope" "months ahead" "2"
+```
+The default is 0
+
 ## Set up Budget Accounts
 You will need to specify the Assets and Liabilities you want included in your budget (For example ignoring Investment accounts). you can use regular expression in these statements
 ```

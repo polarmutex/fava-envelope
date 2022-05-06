@@ -10,6 +10,7 @@ import logging
 import pandas as pd
 import numpy as np
 import re
+from dateutil.relativedelta import relativedelta
 
 from beancount.core.number import Decimal
 from beancount.core import data
@@ -30,13 +31,14 @@ class BeancountEnvelope:
         self.options_map = options_map
         self.currency = currency
         self.negative_rollover = False
+        self.months_ahead = 0
 
         if self.currency:
             self.etype="envelope"+self.currency
         else:
             self.etype="envelope"
 
-        self.start_date, self.budget_accounts, self.mappings, self.income_accounts = self._find_envelop_settings()
+        self.start_date, self.budget_accounts, self.mappings, self.income_accounts, self.months_ahead = self._find_envelop_settings()
 
         if not self.currency:
             self.currency=self._find_currency(options_map)
@@ -52,7 +54,7 @@ class BeancountEnvelope:
         # TODO should be able to assert errors
 
         # Compute end of period
-        self.date_end = datetime.date(today.year, today.month, today.day)
+        self.date_end = datetime.date(today.year, today.month, today.day) + relativedelta(months=+self.months_ahead)
 
         self.price_map = prices.build_price_map(entries)
         self.acctypes = options.get_account_types(options_map)
@@ -74,6 +76,7 @@ class BeancountEnvelope:
         budget_accounts= []
         mappings = []
         income_accounts = []
+        months_ahead = 0
 
         for e in self.entries:
             if isinstance(e, Custom) and e.type == self.etype:
@@ -94,7 +97,9 @@ class BeancountEnvelope:
                 if e.values[0].value == "negative rollover":
                     if e.values[1].value == "allow":
                         self.negative_rollover = True
-        return start_date, budget_accounts, mappings, income_accounts
+                if e.values[0].value == "months ahead":
+                    months_ahead = int(e.values[1].value)
+        return start_date, budget_accounts, mappings, income_accounts, months_ahead
 
     def envelope_tables(self):
 
