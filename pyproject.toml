@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fava-envelope"
-version = "0.5.2"
+version = "0.6.0"
 description = "Fava Envelope budgeting for beancount"
 authors = ["Brian Ryall <bryall@users.noreply.github.com>"]
 homepage = 'https://github.com/bryall/fava-envelope'
@@ -28,6 +28,7 @@ packages = [
 python = "^3.8"
 fava = "^1.14"
 pandas = "^1.2.1"
+python-dateutil = "^2.8.2"
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.2"
