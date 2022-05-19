@@ -1,5 +1,19 @@
 # Changelog
 
+### [0.5.4](https://github.com/polarmutex/fava-envelope/compare/v0.5.3...v0.5.4) (2022-05-19)
+
+
+### Bug Fixes
+
+* [#34](https://github.com/polarmutex/fava-envelope/issues/34) remove unused line in example ([d88d52c](https://github.com/polarmutex/fava-envelope/commit/d88d52c8e303a3ea5af9f23535c552d3632d9692))
+* security dependency updates ([3e8d4b6](https://github.com/polarmutex/fava-envelope/commit/3e8d4b6f3cf47725c70e4ed4a703139c4fa4f073))
+
+
+### Documentation
+
+* changlog edits ([fe6fc3a](https://github.com/polarmutex/fava-envelope/commit/fe6fc3a3dba23fcdffad5f0eb1822496afe371b3))
+* changlog edits ([c1e59e0](https://github.com/polarmutex/fava-envelope/commit/c1e59e0bbe9f6640a793610bf5a7aac1a0be7d1c))
+
 ### [0.5.3](https://github.com/polarmutex/fava-envelope/compare/v0.5.2...v0.5.3) (2022-05-19)
 
 ### Features
