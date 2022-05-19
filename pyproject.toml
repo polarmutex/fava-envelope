@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fava-envelope"
-version = "0.5.3"
+version = "0.5.4"
 description = "Fava Envelope budgeting for beancount"
 authors = ["Brian Ryall <bryall@users.noreply.github.com>"]
 homepage = 'https://github.com/bryall/fava-envelope'
