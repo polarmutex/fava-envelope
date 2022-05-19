@@ -133,3 +133,5 @@ dmypy.json
 
 .vscode
 *.picklecache
+
+.direnv
