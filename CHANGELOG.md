@@ -2,6 +2,10 @@
 
 ### [0.5.3](https://github.com/polarmutex/fava-envelope/compare/v0.5.2...v0.5.3) (2022-05-19)
 
+### Features
+
+* Added negative rollover option
+* Add rudimentary ability to see future months
 
 ### Bug Fixes
 
@@ -11,7 +15,19 @@
 
 ### Bug Fixes
 
-### [0.5.1](https://github.com/polarmutex/fava-envelope/compare/v0.5...v0.5.1) (2021-01-29)
+* bug where tables were not displaying on the latest fava
+
+### [0.5.1](https://github.com/polarmutex/fava-envelope/compare/0.5...v0.5.1) (2021-01-29)
+
+### Features
+
+* Adding multiple budgets in multiple currencies capacity to fava_envelope
 
 ### Bug Fixes
 
+* bug where it would not load page for month selected
+* add checks for lastest fava which changed querytable api
+* Fixed a typo in get_currencies()
+* probably should not hard code 2020
+* allow months with no income by setting the default to 0
+* use beancounts operating_currency if available
