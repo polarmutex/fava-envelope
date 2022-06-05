@@ -15,26 +15,75 @@
         "type": "github"
       }
     },
+    "flake-utils_2": {
+      "locked": {
+        "lastModified": 1653893745,
+        "narHash": "sha256-0jntwV3Z8//YwuOjzhV2sgJJPt+HY6KhU7VZUL0fKZQ=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "1ed9fb1935d260de5fe1c2f7ee0ebaae17ed2fa1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1652794215,
-        "narHash": "sha256-erVj41IcCPDWdt8CwT60ygD+SY/uhqip3RXwiESOCVk=",
+        "lastModified": 1654295026,
+        "narHash": "sha256-3NVxsbku4AOFVlAdaEoN77rsoZpyzKm4+AhJILtJMcM=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "242efdc5a5aff8222c1152c0e4b9262bd02915b6",
+        "rev": "4c7a9aae7b0ef3d2d35e95ec17538a773550f618",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-unstable",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1654295026,
+        "narHash": "sha256-3NVxsbku4AOFVlAdaEoN77rsoZpyzKm4+AhJILtJMcM=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "4c7a9aae7b0ef3d2d35e95ec17538a773550f618",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "poetry2nix": {
+      "inputs": {
+        "flake-utils": "flake-utils_2",
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1653561148,
+        "narHash": "sha256-JzAttqACdvMOTwkzkJ0jFF8MWIo8Uau4w/XUMyqpnd8=",
+        "owner": "nix-community",
+        "repo": "poetry2nix",
+        "rev": "3b01c3e3dc57d511848d8433153ab67db79640e1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "poetry2nix",
         "type": "github"
       }
     },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "poetry2nix": "poetry2nix"
       }
     }
   },

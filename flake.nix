@@ -1,33 +1,46 @@
 {
-  description = "fava-envelope";
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
-    flake-utils.inputs.nixpkgs.follows = "nixpkgs";
-  };
+  description = "Application packaged using poetry2nix";
 
-  outputs = { self, nixpkgs, ... }@inputs: inputs.flake-utils.lib.eachSystem [
-    "x86_64-linux"
-  ]
-    (system:
-      let pkgs = import nixpkgs {
-        inherit system;
-      };
+  inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs";
+  inputs.poetry2nix.url = "github:nix-community/poetry2nix";
+
+  outputs = { self, nixpkgs, flake-utils, poetry2nix }:
+    {
+      # Nixpkgs overlay providing the application
+      overlay = nixpkgs.lib.composeManyExtensions [
+        poetry2nix.overlay
+      ];
+    } // (flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            self.overlay
+          ];
+        };
       in
       {
-        devShell = pkgs.mkShell rec {
-          name = "beancount-prj";
-          packages = with pkgs; [
-            # python
-            python3
-            poetry
-            python3Packages.beancount
-          ];
-          nativeBuildInputs = [ pkgs.pkg-config ];
-          DBUS_PATH = "${pkgs.dbus}";
-          shellHook = ''
-            source $(poetry env info --path)/bin/activate
-          '';
-        };
-      });
+        devShell =
+          let
+            fava_envelope_env = pkgs.poetry2nix.mkPoetryEnv {
+              projectDir = ./.;
+              editablePackageSources = {
+                fava_envelope = ./fava_envelope;
+              };
+              overrides = pkgs.poetry2nix.overrides.withDefaults (
+                self: super: {
+                  python-magic = pkgs.python39.pkgs.python_magic;
+                  numpy = pkgs.python39.pkgs.numpy;
+                }
+              );
+            };
+          in
+          pkgs.mkShell {
+            buildInputs = [
+              fava_envelope_env
+              pkgs.poetry
+            ];
+          };
+      }));
 }
