@@ -1,46 +1,57 @@
 {
-  description = "Application packaged using poetry2nix";
+  description = "nix derivation for fava-envelope";
 
-  inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs";
-  inputs.poetry2nix.url = "github:nix-community/poetry2nix";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs";
+    flake-utils.url = "github:numtide/flake-utils";
+    #polar-nur.url = "github:polarmutex/nur";
+  };
 
-  outputs = { self, nixpkgs, flake-utils, poetry2nix }:
-    {
-      # Nixpkgs overlay providing the application
-      overlay = nixpkgs.lib.composeManyExtensions [
-        poetry2nix.overlay
-      ];
-    } // (flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [
-            self.overlay
-          ];
-        };
-      in
-      {
-        devShell =
-          let
-            fava_envelope_env = pkgs.poetry2nix.mkPoetryEnv {
-              projectDir = ./.;
-              editablePackageSources = {
-                fava_envelope = ./fava_envelope;
-              };
-              overrides = pkgs.poetry2nix.overrides.withDefaults (
-                self: super: {
-                  python-magic = pkgs.python39.pkgs.python_magic;
-                  numpy = pkgs.python39.pkgs.numpy;
-                }
-              );
-            };
-          in
-          pkgs.mkShell {
-            buildInputs = [
-              fava_envelope_env
-              pkgs.poetry
+  outputs = { self, nixpkgs, flake-utils, ... }@inputs:
+    { } // (flake-utils.lib.eachSystem [
+      "aarch64-linux"
+      "aarch64-darwin"
+      "x86_64-darwin"
+      "x86_64-linux"
+    ]
+      (system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnsupportedSystem = true;
+            overlays = [
+              #self.overlay
+              #polar-nur.overlays.default
             ];
           };
-      }));
+        in
+        {
+
+          devShell = pkgs.mkShell rec {
+            name = "favaEnvelopePythonEnv";
+            venvDir = "./.venv";
+            buildInputs = [
+              pkgs.pre-commit
+              pkgs.python310Packages.python
+              pkgs.python310Packages.venvShellHook
+              #pkgs.zlib
+            ];
+            # Run this command, only after creating the virtual environment
+            postVenvCreation = ''
+              unset SOURCE_DATE_EPOCH
+              #pip install -e ".[dev]
+              pip install -r requirements.txt
+            '';
+            # Now we can execute any commands within the virtual environment.
+            # This is optional and can be left out to run pip manually.
+            postShellHook = ''
+              # export LD_LIBRARY_PATH=${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.zlib}/lib:$LD_LIBRARY_PATH
+              export LD_LIBRARY_PATH=${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH
+              # allow pip to install wheels
+              unset SOURCE_DATE_EPOCH
+            '';
+
+          };
+
+        }));
 }

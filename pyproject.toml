@@ -1,43 +1,18 @@
-[tool.poetry]
-name = "fava-envelope"
-version = "0.5.4"
-description = "Fava Envelope budgeting for beancount"
-authors = ["Brian Ryall <bryall@users.noreply.github.com>"]
-homepage = 'https://github.com/bryall/fava-envelope'
-keywords = [
-    "fava",
-    "beancount",
-    "budgeting",
-    "accounting"
-]
-classifiers=[
-    'Development Status :: 3 - Alpha',
-    'Intended Audience :: Financial and Insurance Industry',
-    'License :: OSI Approved :: MIT License',
-    'Natural Language :: English',
-    'Programming Language :: Python :: 3 :: Only',
-    'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-    'Topic :: Office/Business :: Financial :: Accounting'
-]
-license = "MIT"
-packages = [
-    { include = "fava_envelope" }
-]
-
-[tool.poetry.dependencies]
-python = "^3.8"
-pandas = "^1.2.1"
-beancount = "^2.3.5"
-fava = "^1.21"
-python-dateutil = "^2.8.2"
-
-[tool.poetry.dev-dependencies]
-twine = "^3.1.1"
-flake8 = "^4.0.1"
-mypy = "^0.950"
-isort = "^5.10.1"
-black = "^22.3.0"
-
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = [
+    # Primary build utility
+    # Version 42 or higher is required in order to use setup.cfg
+    "setuptools >= 42",
+
+    # Plugin for Setuptools to infer version number from source control
+    # management (e.g. Git)
+    # Version 3.4 or higher is required in order to use setup.cfg
+    #"setuptools_scm[toml] >= 3.4",
+
+    # Used to build a binary distribution
+    #"wheel",
+]
+build-backend = "setuptools.build_meta"
+
+# Enable setuptools_scm to infer the version number from source control
+#[tool.setuptools_scm]
