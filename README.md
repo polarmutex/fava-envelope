@@ -75,5 +75,3 @@ The envelopes will read the operating currency from the core beancount option.
 option "operating_currency" "EUR"
 ```
 It will default to USD if this option is not set. Only a single currency is supported for the budget.
-
-
