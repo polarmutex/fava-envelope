@@ -6,6 +6,7 @@ A beancount fava extension to add a envelope budgeting capability to fava and be
 ![GitHub last commit](https://img.shields.io/github/last-commit/bryall/fava-envelope)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Run on Repl.it](https://repl.it/badge/github/bryall/fava-envelope)](https://repl.it/github/bryall/fava-envelope)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/polarmutex/fava-envelope/master.svg)](https://results.pre-commit.ci/latest/github/polarmutex/fava-envelope/master)
 
 ## Repl.it
 Click the repl.it link to be able to see the plugin in action
@@ -73,6 +74,6 @@ The envelopes will read the operating currency from the core beancount option.
 ```
 option "operating_currency" "EUR"
 ```
-It will default to USD if this option is not set. Only a single currency is supported for the budget. 
+It will default to USD if this option is not set. Only a single currency is supported for the budget.
 
 
