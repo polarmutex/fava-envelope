@@ -16,3 +16,6 @@ build-backend = "setuptools.build_meta"
 
 # Enable setuptools_scm to infer the version number from source control
 #[tool.setuptools_scm]
+
+[tool.black]
+line-length = 79

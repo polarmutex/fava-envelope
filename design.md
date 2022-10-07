@@ -18,4 +18,3 @@ The planned configurations options are the following
  - the Assets to be used in the budget
  - the envelope names
  - the mappings of expenses/income to envelopes
-
