@@ -1,18 +1,56 @@
-[build-system]
-requires = [
-    # Primary build utility
-    # Version 42 or higher is required in order to use setup.cfg
-    "setuptools >= 42",
-
-    # Plugin for Setuptools to infer version number from source control
-    # management (e.g. Git)
-    # Version 3.4 or higher is required in order to use setup.cfg
-    #"setuptools_scm[toml] >= 3.4",
-
-    # Used to build a binary distribution
-    #"wheel",
+#[build-system]
+#requires = [
+#    # Primary build utility
+#    # Version 42 or higher is required in order to use setup.cfg
+#    "setuptools >= 42",
+#
+#    # Plugin for Setuptools to infer version number from source control
+#    # management (e.g. Git)
+#    # Version 3.4 or higher is required in order to use setup.cfg
+#    #"setuptools_scm[toml] >= 3.4",
+#
+#    # Used to build a binary distribution
+#    #"wheel",
+#]
+#build-backend = "setuptools.build_meta"
+[project]
+name = "fava-envelope"
+version = "0.5.4"
+description = ""
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE"}
+keywords = ["fava", "budget", "envelope"]
+authors = [
+  {email = "me@brianryall.xyz"},
+  {name = "Brian Ryall"}
 ]
-build-backend = "setuptools.build_meta"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only"
+]
+
+dependencies = [
+  "beancount",
+  "fava",
+]
+
+[project.optional-dependencies]
+dev = [
+  "black",
+  "flake8",
+  "mypy",
+  "tox",
+  "pytest < 5.0.0",
+  "pytest-cov[all]"
+]
+
+[project.urls]
+homepage = "https://github.com/polarmutex/fava-envelope"
+documentation = "https://github.com/polarmutex/fava-envelope"
+repository = "https://github.com/polarmutex/fava-envelope"
+changelog = "https://github.com/polarmutex/fava-envelope/master/CHANGELOG.md"
 
 # Enable setuptools_scm to infer the version number from source control
 #[tool.setuptools_scm]
