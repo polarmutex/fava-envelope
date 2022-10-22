@@ -40,10 +40,12 @@ dependencies = [
 dev = [
   "black",
   "flake8",
+  "hatch",
   "mypy",
+  "pre-commit",
+  "pytest",
+  "pytest-cov",
   "tox",
-  "pytest < 5.0.0",
-  "pytest-cov[all]"
 ]
 
 [project.urls]

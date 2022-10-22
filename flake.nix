@@ -31,7 +31,6 @@
             name = "favaEnvelopePythonEnv";
             venvDir = "./.venv";
             buildInputs = [
-              pkgs.pre-commit
               pkgs.python310Packages.python
               pkgs.python310Packages.venvShellHook
               #pkgs.zlib
