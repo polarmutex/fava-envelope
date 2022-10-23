@@ -1,1 +1,1 @@
-include fava_envelope/templates/*.html
+include src/fava_envelope/templates/*.html

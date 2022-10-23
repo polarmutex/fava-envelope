@@ -1,21 +1,10 @@
-#[build-system]
-#requires = [
-#    # Primary build utility
-#    # Version 42 or higher is required in order to use setup.cfg
-#    "setuptools >= 42",
-#
-#    # Plugin for Setuptools to infer version number from source control
-#    # management (e.g. Git)
-#    # Version 3.4 or higher is required in order to use setup.cfg
-#    #"setuptools_scm[toml] >= 3.4",
-#
-#    # Used to build a binary distribution
-#    #"wheel",
-#]
-#build-backend = "setuptools.build_meta"
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "fava-envelope"
-version = "0.5.4"
+version = "0.5.5"
 description = ""
 readme = "README.md"
 requires-python = ">=3.7"
@@ -28,7 +17,10 @@ authors = [
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3 :: Only"
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
 ]
 
 dependencies = [
@@ -54,8 +46,8 @@ documentation = "https://github.com/polarmutex/fava-envelope"
 repository = "https://github.com/polarmutex/fava-envelope"
 changelog = "https://github.com/polarmutex/fava-envelope/master/CHANGELOG.md"
 
-# Enable setuptools_scm to infer the version number from source control
-#[tool.setuptools_scm]
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.black]
 line-length = 79
