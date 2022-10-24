@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from beancount.core.number import Decimal
 from fava import __version__ as fava_version
+from fava.context import g
 from fava.ext import FavaExtensionBase
 
 from .modules.beancount_envelope import BeancountEnvelope
@@ -17,7 +18,7 @@ class EnvelopeBudget(FavaExtensionBase):
     def generate_budget_df(self, currency):
         self.currency = currency
         module = BeancountEnvelope(
-            self.ledger.entries, self.ledger.options, self.currency
+            g.ledger.all_entries, self.ledger.options, self.currency
         )
         (
             self.income_tables,
