@@ -146,7 +146,7 @@ class BeancountEnvelope:
         starting_balance = Decimal(0.0)
         query_str = (
             f"select account, convert(sum(position),'{self.currency}')"
-            + " from close on {months[0]}-01 group by 1 order by 1;"
+            + f" from close on {months[0]}-01 group by 1 order by 1;"
         )
         rows = query.run_query(
             self.entries, self.options_map, query_str, numberify=True
