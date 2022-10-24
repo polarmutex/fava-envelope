@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.5](https://github.com/polarmutex/fava-envelope/compare/v0.5.4...v0.5.5) (2022-10-24)
+
+
+### Bug Fixes
+
+* error from pre-commit ([3998f9c](https://github.com/polarmutex/fava-envelope/commit/3998f9c08fb4892d10e34fef475787a89a9ad08d))
+* fava ledger.entries deprecation ([39016f4](https://github.com/polarmutex/fava-envelope/commit/39016f444b5de4a1564081317f41131a4fa8ad1f))
+* html files not included on install ([871e78a](https://github.com/polarmutex/fava-envelope/commit/871e78aac1503627d9525d4c7f87929bb1483956))
+* nix to use poetry2nix ([e972bec](https://github.com/polarmutex/fava-envelope/commit/e972bec9fdcfcebbdd20891e809867362047872c))
+
 ### [0.5.4](https://github.com/polarmutex/fava-envelope/compare/v0.5.3...v0.5.4) (2022-05-19)
 
 
