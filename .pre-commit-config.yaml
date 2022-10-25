@@ -1,4 +1,6 @@
 ci:
+  autofix_commit_msg: "ci(pre-commit): autofix"
+  autoupdate_commit_msg: "ci(pre-commit): autoupdate"
   skip: [
     pip-compile
   ]
