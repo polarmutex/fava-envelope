@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.6](https://github.com/polarmutex/fava-envelope/compare/v0.5.5...v0.5.6) (2022-10-25)
+
+
+### Bug Fixes
+
+* pypi release builds ([6479022](https://github.com/polarmutex/fava-envelope/commit/6479022d08d2b226687dfe133e06a13f93896151))
+
 ## [0.5.5](https://github.com/polarmutex/fava-envelope/compare/v0.5.4...v0.5.5) (2022-10-24)
 
 
