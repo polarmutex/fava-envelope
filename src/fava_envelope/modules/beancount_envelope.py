@@ -371,7 +371,7 @@ class BeancountEnvelope:
                     if e.values[3].value =="Daily":
                         for i in range(len(daterange)):
                             d = f"{daterange[i].year}-{daterange[i].month:02}"
-                            if d == month:   
+                            if d == month:
                                 daysleft = daterange[i].daysinmonth - e.date.day
                                 percentofmon = daysleft/daterange[i].daysinmonth
                                 factor = Decimal(365*percentofmon/12)
@@ -384,7 +384,7 @@ class BeancountEnvelope:
                                 e.values[1].value, (d, "budgeted")
                             ] = round(Decimal(e.values[2].value)*factor,2)
                     if e.values[3].value =="Weekly":
-                        
+
                         for i in range(len(daterange)):
                             d = f"{daterange[i].year}-{daterange[i].month:02}"
                             if d == month:
