@@ -43,7 +43,6 @@ class EnvelopeBudget(FavaExtensionBase):
             return None
 
     def generate_income_query_tables(self, month):
-
         income_table_types = []
         income_table_types.append(("Name", str(str)))
         income_table_types.append(("Amount", str(Decimal)))
@@ -85,7 +84,6 @@ class EnvelopeBudget(FavaExtensionBase):
         return income_table_types, income_table_rows
 
     def generate_envelope_query_tables(self, month):
-
         envelope_table_types = []
         envelope_table_types.append(("Account", str(str)))
         envelope_table_types.append(("Budgeted", str(Decimal)))
