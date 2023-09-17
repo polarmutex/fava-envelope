@@ -1,14 +1,8 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "fava-envelope"
 version = "0.5.6"
 description = ""
 readme = "README.md"
-requires-python = ">=3.7"
-license = {file = "LICENSE"}
 keywords = ["fava", "budget", "envelope"]
 authors = [
   {email = "me@brianryall.xyz"},
@@ -24,21 +18,24 @@ classifiers = [
 ]
 
 dependencies = [
-  "beancount",
-  "fava",
+    "fava>=1.26",
+    "pandas>=2.0.3",
 ]
 
-[project.optional-dependencies]
-dev = [
-  "black",
-  "flake8",
-  "hatch",
-  "mypy",
-  "pre-commit",
-  "pytest",
-  "pytest-cov",
-  "tox",
-]
+requires-python = ">=3.8"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm.build]
+excludes = ["./**/.git"]
+package-dir = "src"
+includes = ["src/fava_envelope"]
+#source-includes = ["tests", "CHANGELOG.md", "LICENSE", "README.md"]
+# editables backend doesn't work well with namespace packages
+editable-backend = "path"
 
 [project.urls]
 homepage = "https://github.com/polarmutex/fava-envelope"
