@@ -116,7 +116,7 @@ pytz==2022.4
     # via
     #   babel
     #   flask-babel
-requests==2.28.1
+requests==2.31.0
     # via
     #   beancount
     #   google-api-core
