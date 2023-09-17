@@ -224,7 +224,7 @@ pytz==2022.5
     #   flask-babel
 pyyaml==6.0
     # via pre-commit
-requests==2.28.1
+requests==2.31.0
     # via
     #   beancount
     #   google-api-core
