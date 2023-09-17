@@ -1,6 +1,6 @@
 [project]
 name = "fava-envelope"
-version = "0.5.6"
+version = "0.5.7"
 description = ""
 readme = "README.md"
 keywords = ["fava", "budget", "envelope"]

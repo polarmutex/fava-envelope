@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.7](https://github.com/polarmutex/fava-envelope/compare/v0.5.6...v0.5.7) (2023-09-17)
+
+
+### Bug Fixes
+
+* fava new release change ([5328f71](https://github.com/polarmutex/fava-envelope/commit/5328f71ba0d37f3c0cd991526c761819c449001a))
+* github action release ([66fd333](https://github.com/polarmutex/fava-envelope/commit/66fd333c4765bb1f450a91fde64b79eac9a08e89))
+
 ## [0.5.6](https://github.com/polarmutex/fava-envelope/compare/v0.5.5...v0.5.6) (2022-10-25)
 
 
