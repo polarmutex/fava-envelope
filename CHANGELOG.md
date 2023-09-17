@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.8](https://github.com/polarmutex/fava-envelope/compare/v0.5.7...v0.5.8) (2023-09-17)
+
+
+### Bug Fixes
+
+* pandas v2 upgrade ([653befa](https://github.com/polarmutex/fava-envelope/commit/653befac73f17000935dbdd4efc43f5e4f6f212a))
+
 ## [0.5.7](https://github.com/polarmutex/fava-envelope/compare/v0.5.6...v0.5.7) (2023-09-17)
 
 
