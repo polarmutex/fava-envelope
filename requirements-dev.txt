@@ -64,7 +64,7 @@ filelock==3.8.0
     #   virtualenv
 flake8==5.0.4
     # via fava-envelope (pyproject.toml)
-flask==2.2.2
+flask==2.2.5
     # via
     #   fava
     #   flask-babel
