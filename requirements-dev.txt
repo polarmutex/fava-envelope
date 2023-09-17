@@ -24,7 +24,7 @@ bottle==0.12.23
     # via beancount
 cachetools==5.2.0
     # via google-auth
-certifi==2022.12.7
+certifi==2023.7.22
     # via
     #   httpcore
     #   httpx
