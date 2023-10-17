@@ -274,7 +274,7 @@ typing-extensions==4.4.0
     # via mypy
 uritemplate==4.1.1
     # via google-api-python-client
-urllib3==1.26.12
+urllib3==1.26.18
     # via requests
 userpath==1.8.0
     # via hatch
