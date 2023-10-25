@@ -283,7 +283,7 @@ virtualenv==20.16.5
     #   hatch
     #   pre-commit
     #   tox
-werkzeug==2.2.3
+werkzeug==3.0.1
     # via
     #   fava
     #   flask

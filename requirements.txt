@@ -138,7 +138,7 @@ uritemplate==4.1.1
     # via google-api-python-client
 urllib3==1.26.18
     # via requests
-werkzeug==2.2.3
+werkzeug==3.0.1
     # via
     #   fava
     #   flask
