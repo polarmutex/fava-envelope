@@ -364,6 +364,53 @@ class BeancountEnvelope:
             if isinstance(e, Custom) and e.type == self.etype:
                 if e.values[0].value == "allocate":
                     month = f"{e.date.year}-{e.date.month:02}"
-                    self.envelope_df.loc[
-                        e.values[1].value, (month, "budgeted")
-                    ] = Decimal(e.values[2].value)
+                    daterange = pd.period_range(e.date, self.date_end, freq='M')
+                    if e.values[3].value =="Daily":
+                        for i in range(len(daterange)):
+                            d = f"{daterange[i].year}-{daterange[i].month:02}"
+                            if d == month:
+                                daysleft = daterange[i].daysinmonth - e.date.day
+                                percentofmon = daysleft/daterange[i].daysinmonth
+                                factor = Decimal(365*percentofmon/12)
+                                self.envelope_df.loc[
+                                    e.values[1].value, (d, "budgeted")
+                                ] = round(Decimal(e.values[2].value)*factor,2)
+                            else:
+                                factor = Decimal(365/12)
+                                self.envelope_df.loc[
+                                e.values[1].value, (d, "budgeted")
+                            ] = round(Decimal(e.values[2].value)*factor,2)
+                    if e.values[3].value =="Weekly":
+
+                        for i in range(len(daterange)):
+                            d = f"{daterange[i].year}-{daterange[i].month:02}"
+                            if d == month:
+                                daysleft = daterange[i].daysinmonth - e.date.day
+                                percentofmon = daysleft/daterange[i].daysinmonth
+                                factor = percentofmon*4.33
+                                self.envelope_df.loc[
+                                    e.values[1].value, (d, "budgeted")
+                                ] = round(Decimal(e.values[2].value)*Decimal(factor),2)
+                            else:
+                                factor = Decimal(4.33)
+                                self.envelope_df.loc[
+                                e.values[1].value, (d, "budgeted")
+                                ] = round(Decimal(e.values[2].value)*Decimal(factor),2)
+                    if e.values[3].value =="Monthly":
+                        for i in range(len(daterange)):
+                            d = f"{daterange[i].year}-{daterange[i].month:02}"
+                            self.envelope_df.loc[
+                                e.values[1].value, (d, "budgeted")
+                            ] = Decimal(e.values[2].value)
+                    if e.values[3].value =="Yearly":
+                        yearedmonth = month
+                        while yearedmonth in range:
+                            self.envelope_df.loc[
+                                e.values[1].value, (d, "budgeted")
+                            ] = Decimal(e.values[2].value)
+                            incyear = e.date + relativedelta(years=1)
+                            yearedmonth = f"{incyear.year}-{incyear.month:02}"
+                    else:
+                        self.envelope_df.loc[
+                            e.values[1].value, (month, "budgeted")
+                        ] = Decimal(e.values[2].value)
