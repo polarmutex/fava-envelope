@@ -151,7 +151,7 @@ class BeancountEnvelope:
         )
         for row in rows[1]:
             if any(regexp.match(row[0]) for regexp in self.budget_accounts):
-                if row[1] is not None:
+                if len(row) > 1 and row[1] is not None:
                     starting_balance += row[1]
         self.income_df[months[0]]["Avail Income"] += starting_balance
 
