@@ -348,15 +348,15 @@ class BeancountEnvelope:
                         temp
                     )
                 else:
-                    self.envelope_df.loc[
-                        account, (month_str, "budgeted")
-                    ] = Decimal(0.00)
-                    self.envelope_df.loc[
-                        account, (month_str, "activity")
-                    ] = Decimal(temp)
-                    self.envelope_df.loc[
-                        account, (month_str, "available")
-                    ] = Decimal(0.00)
+                    self.envelope_df.loc[account, (month_str, "budgeted")] = (
+                        Decimal(0.00)
+                    )
+                    self.envelope_df.loc[account, (month_str, "activity")] = (
+                        Decimal(temp)
+                    )
+                    self.envelope_df.loc[account, (month_str, "available")] = (
+                        Decimal(0.00)
+                    )
 
     def _calc_budget_budgeted(self):
         # rows = {}
@@ -364,6 +364,21 @@ class BeancountEnvelope:
             if isinstance(e, Custom) and e.type == self.etype:
                 if e.values[0].value == "allocate":
                     month = f"{e.date.year}-{e.date.month:02}"
+                    try:
+                        _ = self.envelope_df.loc[
+                            e.values[1].value, (month, "budgeted")
+                        ]
+                    except KeyError:
+                        self.envelope_df.loc[
+                            e.values[1].value, (month, "budgeted")
+                        ] = Decimal(0.00)
+
                     self.envelope_df.loc[
                         e.values[1].value, (month, "budgeted")
-                    ] = Decimal(e.values[2].value)
+                    ] = Decimal(
+                        self.envelope_df.loc[
+                            e.values[1].value, (month, "budgeted")
+                        ]
+                    ) + Decimal(
+                        e.values[2].value
+                    )
