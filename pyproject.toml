@@ -26,25 +26,14 @@ requires-python = ">=3.8"
 license = {text = "MIT"}
 
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
-
-[tool.pdm.build]
-excludes = ["./**/.git"]
-package-dir = "src"
-includes = ["src/fava_envelope"]
-#source-includes = ["tests", "CHANGELOG.md", "LICENSE", "README.md"]
-# editables backend doesn't work well with namespace packages
-editable-backend = "path"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project.urls]
 homepage = "https://github.com/polarmutex/fava-envelope"
 documentation = "https://github.com/polarmutex/fava-envelope"
 repository = "https://github.com/polarmutex/fava-envelope"
 changelog = "https://github.com/polarmutex/fava-envelope/master/CHANGELOG.md"
-
-[tool.setuptools.packages.find]
-where = ["src"]
 
 [tool.black]
 line-length = 79
