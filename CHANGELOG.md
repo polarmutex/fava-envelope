@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.9](https://github.com/polarmutex/fava-envelope/compare/v0.5.8...v0.5.9) (2024-07-05)
+
+
+### Bug Fixes
+
+* add check to row to prevent error ([1332490](https://github.com/polarmutex/fava-envelope/commit/133249066ede736aff56745f661ca5c2d00ca71d))
+* allow more than one allocate in a given month ([4340381](https://github.com/polarmutex/fava-envelope/commit/4340381f8ef7db6a32ce0279e631d029c28b9083))
+
 ## [0.5.8](https://github.com/polarmutex/fava-envelope/compare/v0.5.7...v0.5.8) (2023-09-17)
 
 
