@@ -19,7 +19,11 @@ classifiers = [
 
 dependencies = [
     "fava>=1.26",
-    "pandas>=2.0.3",
+    "pandas>=2.2.2",
+    "Click >= 7"
+]
+dev-dependencies = [
+    "pandas-stubs>=2.2.2",
 ]
 
 requires-python = ">=3.8"
@@ -37,3 +41,13 @@ changelog = "https://github.com/polarmutex/fava-envelope/master/CHANGELOG.md"
 
 [tool.black]
 line-length = 79
+
+[tool.basedpyright]
+# many settings are not enabled even in strict mode, which is why basedpyright includes an "all" option
+# you can then decide which rules you want to disable
+typeCheckingMode = "standard"
+exclude = [
+    ".venv",
+    ".direnv",
+]
+useLibraryCodeForTypes = true
