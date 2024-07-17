@@ -1,17 +1,27 @@
 # from beancount.core.number import Decimal
 # from fava import __version__ as fava_version
 # from fava.context import g
-from fava.ext import FavaExtensionBase
-import pandas as pd
-from collections import namedtuple, defaultdict
-from beancount.core import inventory, data, account_types, amount, convert
-from beancount.parser import options
-from beancount.query import query
+from __future__ import annotations
+
 import datetime
 import re
-from typing import Dict, List, Tuple
-from decimal import Decimal
+from collections import defaultdict
+from collections import namedtuple
 from dataclasses import dataclass
+from decimal import Decimal
+from typing import Dict
+from typing import List
+from typing import Tuple
+
+import pandas as pd
+from beancount.core import account_types
+from beancount.core import amount
+from beancount.core import convert
+from beancount.core import data
+from beancount.core import inventory
+from beancount.parser import options
+from beancount.query import query
+from fava.ext import FavaExtensionBase
 from fava.helpers import FavaAPIError
 
 # from .modules.beancount_envelope import BeancountEnvelope
@@ -37,7 +47,7 @@ MonthTuple = Tuple[Year, Month]
 
 @dataclass(frozen=True)
 class BudgetCtx:
-    months: List[str]
+    months: list[str]
     top: pd.DataFrame
     envelopes: pd.DataFrame
 
@@ -262,7 +272,7 @@ class EnvelopeBudget(FavaExtensionBase):
 
     def calc_budget_accconut_activity(
         self, cfg
-    ) -> Dict[Account, Dict[MonthTuple, amount.Decimal]]:
+    ) -> dict[Account, dict[MonthTuple, amount.Decimal]]:
         acctypes = options.get_account_types(self.ledger.options)
 
         balances = defaultdict(lambda: defaultdict(inventory.Inventory))
@@ -314,7 +324,7 @@ class EnvelopeBudget(FavaExtensionBase):
                 balances[account][month].add_position(posting)
 
         # Reduce the final balances to numbers
-        sbalances: Dict[Account, Dict[MonthTuple, amount.Decimal]] = defaultdict(dict)
+        sbalances: dict[Account, dict[MonthTuple, amount.Decimal]] = defaultdict(dict)
         for account, months in sorted(balances.items()):
             for month, balance in sorted(months.items()):
                 year, mth = month

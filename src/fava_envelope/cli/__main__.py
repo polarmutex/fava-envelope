@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import click
 from beancount import loader
 from fava.core.tree import Tree
