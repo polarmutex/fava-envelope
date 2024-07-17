@@ -1,42 +1,39 @@
-{% set new_querytable = extension.use_new_querytable() %}
-{% import "_query_table.html" as querytable with context %}
-{% set currency = request.args.get('currency') %}
-{% if currency == None%}
-{% set currency = extension.get_currencies()[0]%}
-{% endif %}
-{% if extension.check_month_in_available_months(request.args.get('month'),currency) %}
+{% set budget_id = request.args.get('budget', '0') | int %}
+
 {% set month = request.args.get('month') %}
-{% endif %}
 {% if not month%}
-{% set month = extension.get_budgets_months_available(currency)[-1] %}
-{% endif %}
-{% if extension.get_currencies() %}
-<div class="headerline">
-  {% for c in extension.get_currencies() %}
-  <h3><b>{% if not (currency == c) %}<a href="{{ url_for('extension_report', extension_name='EnvelopeBudget', month=month,currency=c) }}">Envelope Budget {{ c }}</a>{% else %}Envelope Budget {{ c }}{% endif %}</b></h3>
-  {% endfor %}
-</div>
+{% set month = extension.get_budget_months(budget_id)[-1] %}
 {% endif %}
 
-<h3>{{ title }}</h3>
+{% set bootstrap = extension.bootstrap(budget_id, month) %}
 
 <div class="headerline">
-  {% for m in extension.get_budgets_months_available(currency) %}
-  <h3><b>{% if not (module == m) %}<a href="{{ url_for('extension_report', extension_name='EnvelopeBudget', month=m,currency=currency) }}">{{ m }}</a>{% else %} {{ m }}{% endif %}</b></h3>
+  {% for budget in bootstrap.budgets %}
+  <h3>
+    {%- if budget_id == loop.index0 -%}
+      {{ budget.name }}
+    {%- else -%}
+      <a href="{{ url_for('extension_report', extension_name='EnvelopeBudget', budget=loop.index0) }}">{{ budget.name }}</a>
+    {%- endif -%}
+  </h3>
   {% endfor %}
 </div>
+
+<div class="headerline">
+  {% for m in bootstrap.months %}
+  <h3>
+    {%- if month == m -%}
+      {{ m }}
+    {%- else -%}
+      <a href="{{ url_for('extension_report', extension_name='EnvelopeBudget', budget=budget_id, month=m) }}">{{ m }}</a>
+    {%- endif -%}
+  </h3>
+  {% endfor %}
+</div>
+
 <h3>{{ month }}</h3>
 
-{% set income_table = extension.generate_income_query_tables(month) %}
-{% if new_querytable %}
-{{ querytable.querytable(ledger, None, income_table[0], income_table[1]) }}
-{% else %}
-{{ querytable.querytable(None, income_table[0], income_table[1]) }}
-{% endif %}
+{% import "_query_table.html" as querytable with context %}
 
-{% set envelope_table = extension.generate_envelope_query_tables(month) %}
-{% if new_querytable %}
-{{ querytable.querytable(ledger, None, envelope_table[0], envelope_table[1]) }}
-{% else %}
-{{ querytable.querytable(None, envelope_table[0], envelope_table[1]) }}
-{% endif %}
+{{ querytable.querytable(ledger, None, bootstrap.top[0], bootstrap.top[1]) }}
+{{ querytable.querytable(ledger, None, bootstrap.envelopes[0], bootstrap.envelopes[1]) }}
