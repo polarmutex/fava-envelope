@@ -153,7 +153,7 @@ class BeancountEnvelope:
             if any(regexp.match(row[0]) for regexp in self.budget_accounts):
                 if len(row) > 1 and row[1] is not None:
                     starting_balance += row[1]
-        self.income_df[months[0]]["Avail Income"] += starting_balance
+        self.income_df.loc["Avail Income", months[0]] += starting_balance
 
         self.envelope_df.fillna(Decimal(0.00), inplace=True)
 
@@ -161,7 +161,7 @@ class BeancountEnvelope:
         for index, row in self.envelope_df.iterrows():
             for index2, month in enumerate(months):
                 if index2 == 0:
-                    self.envelope_df[month, "available"][index] = (
+                    self.envelope_df.loc[index, (month, "available")] = (
                         row[month, "budgeted"] + row[month, "activity"]
                     )
                 else:
@@ -169,13 +169,13 @@ class BeancountEnvelope:
                         months[index2 - 1], "available"
                     ][index]
                     if prev_available > 0 or self.negative_rollover:
-                        self.envelope_df[month, "available"][index] = (
+                        self.envelope_df.loc[index, (month, "available")] = (
                             prev_available
                             + row[month, "budgeted"]
                             + row[month, "activity"]
                         )
                     else:
-                        self.envelope_df[month, "available"][index] = (
+                        self.envelope_df.loc[index, (month, "available")] = (
                             row[month, "budgeted"] + row[month, "activity"]
                         )
 
