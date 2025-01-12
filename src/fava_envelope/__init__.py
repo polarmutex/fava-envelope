@@ -5,20 +5,12 @@ from __future__ import annotations
 
 import datetime
 import re
-from collections import defaultdict
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Dict
-from typing import List
-from typing import Tuple
 
 import pandas as pd
-from beancount.core import account_types
-from beancount.core import amount
-from beancount.core import convert
-from beancount.core import data
-from beancount.core import inventory
+from beancount.core import account_types, amount, convert, data, inventory
 from beancount.parser import options
 from beanquery import query
 from fava.ext import FavaExtensionBase
@@ -42,7 +34,7 @@ BudgetConfig = namedtuple(
 Account = str
 Month = int
 Year = int
-MonthTuple = Tuple[Year, Month]
+MonthTuple = tuple[Year, Month]
 
 
 @dataclass(frozen=True)
@@ -63,7 +55,9 @@ class EnvelopeBudget(FavaExtensionBase):
 
         for b in cfg.get("budgets", []):
             start_date_str = b.get("start date", "2000-01")  # TODO
-            start_date = datetime.datetime.strptime(start_date_str, "%Y-%m").date()
+            start_date = datetime.datetime.strptime(
+                start_date_str, "%Y-%m"
+            ).date()
 
             today = datetime.date.today()
             end_date = datetime.date(today.year, today.month, today.day)
@@ -144,7 +138,9 @@ class EnvelopeBudget(FavaExtensionBase):
                 overspent = Decimal(0.00)
                 for index2, row in envelope_df.iterrows():
                     if row[months[index - 1], "available"] < Decimal(0.00):
-                        overspent += Decimal(row[months[index - 1], "available"])
+                        overspent += Decimal(
+                            row[months[index - 1], "available"]
+                        )
                 top_df.loc["Overspent", month] = overspent
 
         # Set Budgeted for month
@@ -173,13 +169,17 @@ class EnvelopeBudget(FavaExtensionBase):
                 top_df.loc["Budgeted Future", month] = Decimal(0.00)
             else:
                 next_month = months[index + 1]
-                opp_budgeted_next_month = top_df.loc["Budgeted", next_month] * -1
+                opp_budgeted_next_month = (
+                    top_df.loc["Budgeted", next_month] * -1
+                )
                 if opp_budgeted_next_month < sum_total:
                     top_df.loc["Budgeted Future", month] = Decimal(
                         -1 * opp_budgeted_next_month
                     )
                 else:
-                    top_df.loc["Budgeted Future", month] = Decimal(-1 * sum_total)
+                    top_df.loc["Budgeted Future", month] = Decimal(
+                        -1 * sum_total
+                    )
 
         # Set to be budgeted
         for index, month in enumerate(months):
@@ -189,11 +189,15 @@ class EnvelopeBudget(FavaExtensionBase):
 
     def bootstrap(self, id: int, month: Month):
         if not 0 <= id < len(self.budgets):
-            raise FavaAPIError(f"invalid dashboard ID: {id}, maybe no budgets defined")
+            raise FavaAPIError(
+                f"invalid dashboard ID: {id}, maybe no budgets defined"
+            )
         return {
             "budgets": self.extension_config.budgets,
             "months": self.budgets[id].months,
-            "top": self.generate_income_query_tables(self.budgets[id].top, month),
+            "top": self.generate_income_query_tables(
+                self.budgets[id].top, month
+            ),
             "envelopes": self.generate_envelope_query_tables(
                 self.budgets[id].envelopes, month
             ),
@@ -204,9 +208,15 @@ class EnvelopeBudget(FavaExtensionBase):
 
         # Calculate Starting Balance Income
         starting_balance = Decimal(0.0)
-        query_str = f"select account, convert(sum(position),'{cfg.currency}') from close on {months[0]}-01 group by 1 order by 1;"
+        query_str = (
+            f"select account, convert(sum(position),'{cfg.currency}')"
+            + f" from close on {months[0]}-01 group by 1 order by 1;"
+        )
         rows = query.run_query(
-            self.ledger.all_entries, self.ledger.options, query_str, numberify=True
+            self.ledger.all_entries,
+            self.ledger.options,
+            query_str,
+            numberify=True,
         )
         for row in rows[1]:
             if any(regexp.match(row[0]) for regexp in cfg.budget_accounts):
@@ -234,7 +244,8 @@ class EnvelopeBudget(FavaExtensionBase):
 
     def build_envelope_df(self, months, balances) -> pd.DataFrame:
         column_index = pd.MultiIndex.from_product(
-            [months, ["budgeted", "activity", "available"]], names=["Month", "col"]
+            [months, ["budgeted", "activity", "available"]],
+            names=["Month", "col"],
         )
         df = pd.DataFrame(columns=column_index)
         df.index.name = "Envelopes"
@@ -245,7 +256,9 @@ class EnvelopeBudget(FavaExtensionBase):
             for month in balances[account]:
                 month_str = f"{str(month[0])}-{str(month[1]).zfill(2)}"
                 total = balances[account].get(month) * -1
-                df.loc[account, (month_str, "activity")] = amount.Decimal(total)
+                df.loc[account, (month_str, "activity")] = amount.Decimal(
+                    total
+                )
 
         df = df.fillna(Decimal(0.00))
 
@@ -284,7 +297,10 @@ class EnvelopeBudget(FavaExtensionBase):
 
             contains_budget_accounts = False
             for posting in entry.postings:
-                if any(regexp.match(posting.account) for regexp in cfg.budget_accounts):
+                if any(
+                    regexp.match(posting.account)
+                    for regexp in cfg.budget_accounts
+                ):
                     contains_budget_accounts = True
                     break
             if not contains_budget_accounts:
@@ -313,31 +329,45 @@ class EnvelopeBudget(FavaExtensionBase):
                         continue
 
                 if account_type == acctypes.income or (
-                    any(regexp.match(account) for regexp in cfg.income_accounts)
+                    any(
+                        regexp.match(account) for regexp in cfg.income_accounts
+                    )
                 ):
                     account = "Income"
                 elif any(
-                    regexp.match(posting.account) for regexp in cfg.budget_accounts
+                    regexp.match(posting.account)
+                    for regexp in cfg.budget_accounts
                 ):
                     continue
 
                 balances[account][month].add_position(posting)
 
         # Reduce the final balances to numbers
-        sbalances: dict[Account, dict[MonthTuple, amount.Decimal]] = defaultdict(dict)
+        sbalances: dict[Account, dict[MonthTuple, amount.Decimal]] = (
+            defaultdict(dict)
+        )
         for account, months in sorted(balances.items()):
             for month, balance in sorted(months.items()):
                 year, mth = month
                 date = datetime.date(year, mth, 1)
-                balance = balance.reduce(convert.get_value, self.ledger.prices, date)
                 balance = balance.reduce(
-                    convert.convert_position, cfg.currency, self.ledger.prices, date
+                    convert.get_value, self.ledger.prices, date
+                )
+                balance = balance.reduce(
+                    convert.convert_position,
+                    cfg.currency,
+                    self.ledger.prices,
+                    date,
                 )
                 try:
                     pos = balance.get_only_position()
                 except AssertionError:
                     raise
-                total = pos.units.number if pos and pos.units else amount.Decimal(0)
+                total = (
+                    pos.units.number
+                    if pos and pos.units
+                    else amount.Decimal(0)
+                )
                 sbalances[account][month] = total
 
         return sbalances
@@ -367,7 +397,9 @@ class EnvelopeBudget(FavaExtensionBase):
 
     def get_budget_months(self, id: int):
         if not 0 <= id < len(self.budgets):
-            raise FavaAPIError(f"invalid dashboard ID: {id}, maybe no budgets defined")
+            raise FavaAPIError(
+                f"invalid dashboard ID: {id}, maybe no budgets defined"
+            )
         return self.budgets[id].months
 
     def generate_income_query_tables(self, df, month):

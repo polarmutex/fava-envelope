@@ -125,12 +125,9 @@
           );
       in {
         pre-commit.settings.hooks = {
-          # ruff.enable = true;
+          black.enable = true;
+          ruff.enable = true;
         };
-
-        # isort.enable = true;
-        # pyupgrade.enable = true;
-        # flake8.enable = true;
 
         devShells.default = let
           pkgs = nixpkgs.legacyPackages.${system};

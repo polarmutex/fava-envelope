@@ -7,12 +7,14 @@ import logging
 import re
 
 import pandas as pd
-from beancount.core import account_types
-from beancount.core import amount
-from beancount.core import convert
-from beancount.core import data
-from beancount.core import inventory
-from beancount.core import prices
+from beancount.core import (
+    account_types,
+    amount,
+    convert,
+    data,
+    inventory,
+    prices,
+)
 from beancount.core.data import Custom
 from beancount.core.number import Decimal
 from beancount.parser import options

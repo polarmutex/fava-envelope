@@ -4,6 +4,7 @@ import argparse
 import logging
 
 from beancount import loader
+
 from fava_envelope.modules.beancount_envelope import BeancountEnvelope
 
 
