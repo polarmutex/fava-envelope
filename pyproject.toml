@@ -22,7 +22,9 @@ classifiers = [
 dependencies = [
     "fava>=1.26",
     "pandas>=2.2.2",
-    "Click >= 7"
+    "Click >= 7",
+    "beanquery>=0.1.0",
+    "beancount>=3.0.0",
 ]
 
 [dependency-groups]
@@ -57,6 +59,15 @@ changelog = "https://github.com/polarmutex/fava-envelope/master/CHANGELOG.md"
 [tool.black]
 line-length = 79
 
+[tool.ruff.lint]
+select = [
+    # "C90",    # McCabe cyclomatic complexity
+    # "E",      # pycodestyle
+    # "N",      # pep8-naming
+    # "U",      # pyupgrade
+    # "W",      # pycodestyle
+]
+
 [tool.basedpyright]
 # many settings are not enabled even in strict mode, which is why basedpyright includes an "all" option
 # you can then decide which rules you want to disable
@@ -66,3 +77,5 @@ exclude = [
     ".direnv",
 ]
 useLibraryCodeForTypes = true
+venvPath="."
+venv=".venv"

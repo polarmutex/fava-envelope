@@ -153,6 +153,9 @@
               unset PYTHONPATH
               export REPO_ROOT=$(git rev-parse --show-toplevel)
               ${config.pre-commit.installationScript}
+              # set a venv folder for basedpyright
+              venv="$(cd $(dirname $(which python)); cd ..; pwd)"
+              ln -Tsf "$venv" .venv
             '';
           };
         packages = {
