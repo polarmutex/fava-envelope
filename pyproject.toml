@@ -1,6 +1,6 @@
 [project]
 name = "fava-envelope"
-version = "0.5.9"
+version = "0.6.0"
 description = ""
 requires-python = ">=3.9"
 readme = "README.md"
