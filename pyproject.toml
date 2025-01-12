@@ -2,7 +2,9 @@
 name = "fava-envelope"
 version = "0.5.9"
 description = ""
+requires-python = ">=3.9"
 readme = "README.md"
+license = {text = "MIT"}
 keywords = ["fava", "budget", "envelope"]
 authors = [
   {email = "me@brianryall.xyz"},
@@ -22,12 +24,25 @@ dependencies = [
     "pandas>=2.2.2",
     "Click >= 7"
 ]
-dev-dependencies = [
-    "pandas-stubs>=2.2.2",
-]
 
-requires-python = ">=3.8"
-license = {text = "MIT"}
+[dependency-groups]
+dev = [
+  {include-group = "test"},
+  {include-group = "typing"},
+  {include-group = "lint"},
+]
+typing = [
+    "pandas-stubs>=2.2.2",
+  "mypy>=1.13.0",
+]
+test = [
+  "pytest-cov>=6.0.0",
+  "pytest-django>=4.9.0",
+  "pytest>=8.3.3",
+]
+lint = [
+  "ruff>=0.7.2",
+]
 
 [build-system]
 requires = ["hatchling"]
