@@ -20,7 +20,7 @@ from beancount.core import convert
 from beancount.core import data
 from beancount.core import inventory
 from beancount.parser import options
-from beancount.query import query
+from beanquery import query
 from fava.ext import FavaExtensionBase
 from fava.helpers import FavaAPIError
 
@@ -99,8 +99,8 @@ class EnvelopeBudget(FavaExtensionBase):
             print(f"processiing budget {budget}")
             bc = self.process_budget(budget)
             self.budgets.append(bc)
-        print(self.budgets[0].top)
-        print(self.budgets[0].envelopes)
+        # print(self.budgets[0].top)
+        # print(self.budgets[0].envelopes)
 
     def process_budget(self, cfg: BudgetConfig) -> BudgetCtx:
         months = []
