@@ -24,6 +24,11 @@
       inputs.uv2nix.follows = "uv2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    git-hooks-nix = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -33,6 +38,7 @@
     uv2nix,
     pyproject-nix,
     pyproject-build-systems,
+    git-hooks-nix,
     ...
   } @ inputs:
     flake-parts.lib.mkFlake
@@ -45,7 +51,15 @@
         "aarch64-darwin"
       ];
 
-      perSystem = {system, ...}: let
+      imports = [
+        git-hooks-nix.flakeModule
+      ];
+
+      perSystem = {
+        config,
+        system,
+        ...
+      }: let
         inherit (nixpkgs) lib;
         pkgs = import nixpkgs {
           inherit system;
@@ -110,6 +124,14 @@
             ]
           );
       in {
+        pre-commit.settings.hooks = {
+          # ruff.enable = true;
+        };
+
+        # isort.enable = true;
+        # pyupgrade.enable = true;
+        # flake8.enable = true;
+
         devShells.default = let
           pkgs = nixpkgs.legacyPackages.${system};
           editablePythonSet = pythonSets.overrideScope editableOverlay;
@@ -130,6 +152,7 @@
             shellHook = ''
               unset PYTHONPATH
               export REPO_ROOT=$(git rev-parse --show-toplevel)
+              ${config.pre-commit.installationScript}
             '';
           };
         packages = {
