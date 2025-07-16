@@ -20,9 +20,11 @@
 
     pyproject-build-systems = {
       url = "github:pyproject-nix/build-system-pkgs";
-      inputs.pyproject-nix.follows = "pyproject-nix";
-      inputs.uv2nix.follows = "uv2nix";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        pyproject-nix.follows = "pyproject-nix";
+        uv2nix.follows = "uv2nix";
+        nixpkgs.follows = "nixpkgs";
+      };
     };
 
     git-hooks-nix = {
@@ -32,7 +34,7 @@
   };
 
   outputs = {
-    # self,
+    self,
     flake-parts,
     nixpkgs,
     uv2nix,
@@ -66,61 +68,48 @@
           overlays = [];
         };
 
+        # Load a uv workspace from a workspace root.
+        # Uv2nix treats all uv projects as workspace projects.
         workspace = uv2nix.lib.workspace.loadWorkspace {workspaceRoot = ./.;};
 
+        # Create package overlay from workspace.
         overlay = workspace.mkPyprojectOverlay {
-          sourcePreference = "wheel";
+          # Prefer prebuilt binary wheels as a package source.
+          # Sdists are less likely to "just work" because of the metadata missing from uv.lock.
+          # Binary wheels are more likely to, but may still require overrides for library dependencies.
+          sourcePreference = "wheel"; # or sourcePreference = "sdist";
+          # Optionally customise PEP 508 environment
+          # environ = {
+          #   platform_release = "5.10.65";
+          # };
         };
 
-        editableOverlay = workspace.mkEditablePyprojectOverlay {
-          root = "$REPO_ROOT";
+        # Extend generated overlay with build fixups
+        #
+        # Uv2nix can only work with what it has, and uv.lock is missing essential metadata to perform some builds.
+        # This is an additional overlay implementing build fixups.
+        # See:
+        # - https://pyproject-nix.github.io/uv2nix/FAQ.html
+        pyprojectOverrides = _final: _prev: {
+          # Implement build fixups here.
+          # Note that uv2nix is _not_ using Nixpkgs buildPythonPackage.
+          # It's using https://pyproject-nix.github.io/pyproject.nix/build.html
         };
 
-        # Python sets grouped per system
-        pythonSets = let
-          # Base Python package set from pyproject.nix
-          baseSet = pkgs.callPackage pyproject-nix.build.packages {
-            python = pkgs.python312;
-          };
+        # Use Python 3.12 from nixpkgs
+        python = pkgs.python312;
 
-          # An overlay of build fixups & test additions
-          pyprojectOverrides = _final: prev: {
-          };
-
-          buildSystemOverrides = final: prev: let
-            inherit (final) resolveBuildSystem;
-            inherit (builtins) mapAttrs;
-            # Build system dependencies specified in the shape expected by resolveBuildSystem
-            # The empty lists below are lists of optional dependencies.
-            #
-            # A package `foo` with specification written as:
-            # `setuptools-scm[toml]` in pyproject.toml would be written as
-            # `foo.setuptools-scm = [ "toml" ]` in Nix
-            buildSysOverrides = {
-              # curlify.setuptools = [];
-              # fava-dashboards = {
-              #   hatchling = [];
-              #   hatch-vcs = [];
-              # };
-              # fava-envelope.pdm = [];
-              # ofxparse.setuptools = [];
-              # ofxtools.setuptools = [];
-            };
-          in
-            mapAttrs (
-              name: spec:
-                prev.${name}.overrideAttrs (old: {
-                  nativeBuildInputs = old.nativeBuildInputs ++ resolveBuildSystem spec;
-                })
-            )
-            buildSysOverrides;
-        in
-          baseSet.overrideScope (
+        # Construct package set
+        pythonSet =
+          # Use base package set from pyproject.nix builders
+          (pkgs.callPackage pyproject-nix.build.packages {
+            inherit python;
+          }).overrideScope
+          (
             lib.composeManyExtensions [
               pyproject-build-systems.overlays.default
               overlay
               pyprojectOverrides
-              buildSystemOverrides
             ]
           );
       in {
@@ -129,33 +118,98 @@
           ruff.enable = true;
         };
 
-        devShells.default = let
-          pkgs = nixpkgs.legacyPackages.${system};
-          editablePythonSet = pythonSets.overrideScope editableOverlay;
-          venv = editablePythonSet.mkVirtualEnv "fava-envelope-dev-env" {
-            fava-envelope = ["dev"];
-          };
-        in
-          pkgs.mkShell {
-            env = {
-              UV_NO_SYNC = "1";
-              UV_PYTHON = "${venv}/bin/python";
-              UV_PYTHON_DOWNLOADS = "never";
+        # Package a virtual environment as our main application.
+        #
+        # Enable no optional dependencies for production build.
+        # packages.default = pythonSet.mkVirtualEnv "fava-envelope-env" workspace.deps.default;
+
+        # Make hello runnable with `nix run`
+        apps = {
+          # default = {
+          #   type = "app";
+          #   program = "${self.packages.${system}.default}/bin/hello";
+          # };
+        };
+
+        # This example provides two different modes of development:
+        # - Impurely using uv to manage virtual environments
+        # - Pure development using uv2nix to manage virtual environments
+        devShells = {
+          # It is of course perfectly OK to keep using an impure virtualenv workflow and only use uv2nix to build packages.
+          # This devShell simply adds Python and undoes the dependency leakage done by Nixpkgs Python infrastructure.
+          default = let
+            # Create an overlay enabling editable mode for all local dependencies.
+            editableOverlay = workspace.mkEditablePyprojectOverlay {
+              # Use environment variable
+              root = "$REPO_ROOT";
+              # Optional: Only enable editable for these packages
+              # members = [ "hello-world" ];
             };
-            packages = with pkgs; [
-              venv
-              uv
-            ];
-            shellHook = ''
-              unset PYTHONPATH
-              export REPO_ROOT=$(git rev-parse --show-toplevel)
-              ${config.pre-commit.installationScript}
-              # set a venv folder for basedpyright
-              venv="$(cd $(dirname $(which python)); cd ..; pwd)"
-              ln -Tsf "$venv" .venv
-            '';
-          };
-        packages = {
+
+            # Override previous set with our overrideable overlay.
+            editablePythonSet = pythonSet.overrideScope (
+              lib.composeManyExtensions [
+                editableOverlay
+
+                # Apply fixups for building an editable package of your workspace packages
+                (final: prev: {
+                  fava-envelope = prev.fava-envelope.overrideAttrs (old: {
+                    # It's a good idea to filter the sources going into an editable build
+                    # so the editable package doesn't have to be rebuilt on every change.
+                    src = lib.fileset.toSource {
+                      root = old.src;
+                      fileset = lib.fileset.unions [
+                        (old.src + "/pyproject.toml")
+                        (old.src + "/README.md")
+                        (old.src + "/src/fava_envelope/__init__.py")
+                      ];
+                    };
+
+                    # Hatchling (our build system) has a dependency on the `editables` package when building editables.
+                    #
+                    # In normal Python flows this dependency is dynamically handled, and doesn't need to be explicitly declared.
+                    # This behaviour is documented in PEP-660.
+                    #
+                    # With Nix the dependency needs to be explicitly declared.
+                    nativeBuildInputs =
+                      old.nativeBuildInputs
+                      ++ final.resolveBuildSystem {
+                        editables = [];
+                      };
+                  });
+                })
+              ]
+            );
+
+            # Build virtual environment, with local packages being editable.
+            #
+            # Enable all optional dependencies for development.
+            virtualenv = editablePythonSet.mkVirtualEnv "hello-world-dev-env" workspace.deps.all;
+          in
+            pkgs.mkShell {
+              packages = [
+                virtualenv
+                pkgs.uv
+              ];
+              env = {
+                # Don't create venv using uv
+                UV_NO_SYNC = "1";
+
+                # Force uv to use nixpkgs Python interpreter
+                UV_PYTHON = python.interpreter;
+
+                # Prevent uv from downloading managed Python's
+                UV_PYTHON_DOWNLOADS = "never";
+              };
+
+              shellHook = ''
+                # Undo dependency propagation by nixpkgs.
+                unset PYTHONPATH
+
+                # Get repository root using git. This is expanded at runtime by the editable `.pth` machinery.
+                export REPO_ROOT=$(git rev-parse --show-toplevel)
+              '';
+            };
         };
       };
     };
