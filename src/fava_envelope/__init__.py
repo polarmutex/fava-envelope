@@ -13,6 +13,7 @@ import pandas as pd
 from beancount.core import account_types, amount, convert, data, inventory
 from beancount.parser import options
 from beanquery import query
+from fava.core.query import DecimalColumn, QueryResultTable, StrColumn
 from fava.ext import FavaExtensionBase
 from fava.helpers import FavaAPIError
 
@@ -195,10 +196,10 @@ class EnvelopeBudget(FavaExtensionBase):
         return {
             "budgets": self.extension_config.budgets,
             "months": self.budgets[id].months,
-            "top": self.generate_income_query_tables(
+            "top": self.generate_income_query_table(
                 self.budgets[id].top, month
             ),
-            "envelopes": self.generate_envelope_query_tables(
+            "envelopes": self.generate_envelope_query_table(
                 self.budgets[id].envelopes, month
             ),
         }
@@ -402,63 +403,50 @@ class EnvelopeBudget(FavaExtensionBase):
             )
         return self.budgets[id].months
 
-    def generate_income_query_tables(self, df, month):
-        income_table_types = []
-        income_table_types.append(("Name", str(str)))
-        income_table_types.append(("Amount", str(Decimal)))
-
-        income_table_rows = []
+    def generate_income_query_table(self, df, month) -> QueryResultTable:
+        rows = []
 
         if month is not None:
-            income_table_rows.append(
-                {
-                    "Name": "Funds for month",
-                    "Amount": df.loc["Avail Income", month],
-                }
-            )
-            income_table_rows.append(
-                {
-                    "Name": "Overspent in prev month",
-                    "Amount": df.loc["Overspent", month],
-                }
-            )
-            income_table_rows.append(
-                {
-                    "Name": "Budgeted for month",
-                    "Amount": df.loc["Budgeted", month],
-                }
-            )
-            income_table_rows.append(
-                {
-                    "Name": "To be budgeted for month",
-                    "Amount": df.loc["To Be Budgeted", month],
-                }
-            )
-            income_table_rows.append(
-                {
-                    "Name": "Budgeted in the future",
-                    "Amount": df.loc["Budgeted Future", month],
-                }
+            rows.extend(
+                [
+                    ("Funds for month", df.loc["Avail Income", month]),
+                    ("Overspent in prev month", df.loc["Overspent", month]),
+                    ("Budgeted for month", df.loc["Budgeted", month]),
+                    (
+                        "To be budgeted for month",
+                        df.loc["To Be Budgeted", month],
+                    ),
+                    (
+                        "Budgeted in the future",
+                        df.loc["Budgeted Future", month],
+                    ),
+                ]
             )
 
-        return income_table_types, income_table_rows
+        return QueryResultTable(
+            [StrColumn("Name"), DecimalColumn("Amount")], rows
+        )
 
-    def generate_envelope_query_tables(self, df, month):
-        envelope_table_types = []
-        envelope_table_types.append(("Account", str(str)))
-        envelope_table_types.append(("Budgeted", str(Decimal)))
-        envelope_table_types.append(("Activity", str(Decimal)))
-        envelope_table_types.append(("Available", str(Decimal)))
-
-        envelope_table_rows = []
+    def generate_envelope_query_table(self, df, month) -> QueryResultTable:
+        rows = []
 
         if month is not None:
             for index, e_row in df.iterrows():
-                row = {}
-                row["Account"] = index
-                row["Budgeted"] = e_row[month, "budgeted"]
-                row["Activity"] = e_row[month, "activity"]
-                row["Available"] = e_row[month, "available"]
-                envelope_table_rows.append(row)
+                rows.append(
+                    (
+                        index,
+                        e_row[month, "budgeted"],
+                        e_row[month, "activity"],
+                        e_row[month, "available"],
+                    )
+                )
 
-        return envelope_table_types, envelope_table_rows
+        return QueryResultTable(
+            [
+                StrColumn("Account"),
+                DecimalColumn("Budgeted"),
+                DecimalColumn("Activity"),
+                DecimalColumn("Available"),
+            ],
+            rows,
+        )

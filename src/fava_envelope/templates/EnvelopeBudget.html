@@ -33,7 +33,12 @@
 
 <h3>{{ month }}</h3>
 
-{% import "_query_table.html" as querytable with context %}
+<h4>Income Summary</h4>
+<svelte-component type="query-table">
+  <script type="application/json">{{bootstrap.top|tojson}}</script>
+</svelte-component>
 
-{{ querytable.querytable(ledger, None, bootstrap.top[0], bootstrap.top[1]) }}
-{{ querytable.querytable(ledger, None, bootstrap.envelopes[0], bootstrap.envelopes[1]) }}
+<h4>Envelope Budget</h4>
+<svelte-component type="query-table">
+  <script type="application/json">{{bootstrap.envelopes|tojson}}</script>
+</svelte-component>
