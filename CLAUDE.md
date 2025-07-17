@@ -38,7 +38,7 @@ A Beancount Fava extension that implements envelope budgeting methodology for pe
 4. **Web Template** (`src/fava_envelope/templates/EnvelopeBudget.html`)
    - Jinja2 template for Fava web interface
    - Budget and month selection interface
-   - Query table rendering for income and envelope data
+   - Modern Svelte component rendering for query tables
 
 ### Data Flow
 
@@ -95,18 +95,25 @@ pre-commit install
 
 ### Development Commands
 ```bash
-# Linting and formatting
-ruff check src/
-ruff format src/
+# Linting and formatting (using nix environment)
+nix develop --command ruff check src/
+nix develop --command ruff format src/
+
+# Alternative using uv
+uv run ruff check src/
+uv run ruff format src/
 
 # Type checking
-mypy src/
+nix develop --command mypy src/
 
 # Run tests
-pytest
+uv run python -m pytest
+
+# Run tests with coverage
+uv run python -m pytest --cov=fava_envelope --cov-report=html
 
 # Pre-commit (all checks)
-pre-commit run --all-files
+nix develop --command pre-commit run --all-files
 ```
 
 ### Legacy Makefile Commands
@@ -181,6 +188,25 @@ src/fava_envelope/
 └── templates/
     └── EnvelopeBudget.html  # Fava web template
 
+tests/                       # Comprehensive test suite
+├── __init__.py
+├── conftest.py             # Pytest configuration
+├── pytest.ini             # Test settings
+├── README.md               # Test documentation
+├── fixtures/               # Test data and utilities
+│   ├── __init__.py
+│   ├── test_data.py        # Mock data and fixtures
+│   └── sample.beancount    # Sample Beancount file
+├── unit/                   # Unit tests
+│   ├── __init__.py
+│   ├── test_config.py      # Configuration parsing tests
+│   ├── test_envelope_budget.py  # Main class tests
+│   ├── test_budget_calculations.py  # Calculation logic tests
+│   └── test_cli.py         # CLI functionality tests
+└── integration/            # Integration tests
+    ├── __init__.py
+    └── test_full_workflow.py  # End-to-end tests
+
 pyproject.toml               # Project configuration
 tox.ini                      # Testing configuration
 flake.nix                    # Nix development environment  
@@ -205,19 +231,46 @@ example.beancount            # Example/test data
 
 ## Testing
 
+The project includes a comprehensive test suite with 59 tests covering unit, integration, and CLI functionality.
+
 ### Test Structure
-- Tests configured in `pyproject.toml`
-- Uses pytest with coverage
-- Tox for multi-environment testing
+- **Unit Tests** (49 tests): Configuration parsing, main class methods, budget calculations, CLI
+- **Integration Tests** (10 tests): End-to-end workflows with real Beancount data
+- **Test Coverage**: 93% on main extension module, 53% overall
+- **Test Framework**: pytest with coverage reporting and fixtures
+
+### Test Categories
+- `tests/unit/test_config.py` - Configuration parsing and validation (13 tests)
+- `tests/unit/test_envelope_budget.py` - Core EnvelopeBudget class functionality (15 tests)
+- `tests/unit/test_budget_calculations.py` - Budget calculation logic (8 tests)
+- `tests/unit/test_cli.py` - Command-line interface (13 tests)
+- `tests/integration/test_full_workflow.py` - End-to-end scenarios (10 tests)
 
 ### Running Tests
 ```bash
-# Run tests with coverage
-pytest --cov=fava_envelope
+# Run all tests
+uv run python -m pytest
 
-# Run tests with tox (multiple Python versions)
-tox
+# Run with coverage
+uv run python -m pytest --cov=fava_envelope --cov-report=html
+
+# Run specific test categories
+uv run python -m pytest tests/unit/          # Unit tests only
+uv run python -m pytest tests/integration/   # Integration tests only
+
+# Run with verbose output
+uv run python -m pytest -v
+
+# Using nix development environment
+nix develop --command pytest
 ```
+
+### Test Features
+- **Mock data and fixtures** for consistent testing
+- **Sample Beancount files** for realistic integration testing
+- **Comprehensive coverage** of configuration scenarios, error handling, and edge cases
+- **Performance testing** to ensure reasonable execution times
+- **CLI testing** with real file processing
 
 ## Key Configuration Files
 
@@ -232,8 +285,8 @@ tox
 ### Web Interface Methods
 - `bootstrap(id, month)`: Initialize budget data for web interface
 - `get_budget_months(id)`: Get available months for budget
-- `generate_income_query_tables()`: Format income data for display
-- `generate_envelope_query_tables()`: Format envelope data for display
+- `generate_income_query_table()`: Generate QueryResultTable for income data (modern Svelte)
+- `generate_envelope_query_table()`: Generate QueryResultTable for envelope data (modern Svelte)
 
 ### Core Processing Methods  
 - `process_budget(cfg)`: Main budget calculation

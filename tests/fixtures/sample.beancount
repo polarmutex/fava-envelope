@@ -1,0 +1,75 @@
+option "title" "Test Envelope Budget"
+option "operating_currency" "USD"
+
+2024-01-01 custom "fava-extension" "fava_envelope" "{
+    'budgets': [
+        {
+            'name': 'Test Budget',
+            'currency': 'USD',
+            'start date': '2024-01',
+            'budget accounts': [
+                'Assets:Checking'
+            ],
+            'mappings': [
+                {'from': 'Expenses:Food:.*', 'to': 'Expenses:Food'}
+            ]
+        }
+    ]
+}"
+
+; Account openings
+2024-01-01 open Assets:Checking USD
+2024-01-01 open Income:Salary USD
+2024-01-01 open Expenses:Food USD
+2024-01-01 open Expenses:Entertainment USD
+2024-01-01 open Expenses:Transportation USD
+
+; Starting balance
+2024-01-01 balance Assets:Checking 1000.00 USD
+
+; Income transactions
+2024-01-15 * "Employer" "Salary"
+  Income:Salary              -3000.00 USD
+  Assets:Checking             3000.00 USD
+
+2024-02-15 * "Employer" "Salary"
+  Income:Salary              -3000.00 USD
+  Assets:Checking             3000.00 USD
+
+2024-03-15 * "Employer" "Salary"
+  Income:Salary              -3000.00 USD
+  Assets:Checking             3000.00 USD
+
+; Expense transactions
+2024-01-20 * "Grocery Store" "Weekly groceries"
+  Expenses:Food:Groceries      150.00 USD
+  Assets:Checking             -150.00 USD
+
+2024-01-25 * "Restaurant" "Dinner out"
+  Expenses:Food:Dining          75.00 USD
+  Assets:Checking              -75.00 USD
+
+2024-02-05 * "Movie Theater" "Movies"
+  Expenses:Entertainment       25.00 USD
+  Assets:Checking             -25.00 USD
+
+2024-02-20 * "Gas Station" "Fuel"
+  Expenses:Transportation      40.00 USD
+  Assets:Checking             -40.00 USD
+
+2024-03-10 * "Grocery Store" "Monthly shopping"
+  Expenses:Food:Groceries      200.00 USD
+  Assets:Checking             -200.00 USD
+
+; Budget allocations
+2024-01-31 custom "envelope" "allocate" "Expenses:Food" 500.00 USD
+2024-01-31 custom "envelope" "allocate" "Expenses:Entertainment" 100.00 USD
+2024-01-31 custom "envelope" "allocate" "Expenses:Transportation" 200.00 USD
+
+2024-02-28 custom "envelope" "allocate" "Expenses:Food" 400.00 USD
+2024-02-28 custom "envelope" "allocate" "Expenses:Entertainment" 80.00 USD
+2024-02-28 custom "envelope" "allocate" "Expenses:Transportation" 180.00 USD
+
+2024-03-31 custom "envelope" "allocate" "Expenses:Food" 450.00 USD
+2024-03-31 custom "envelope" "allocate" "Expenses:Entertainment" 120.00 USD
+2024-03-31 custom "envelope" "allocate" "Expenses:Transportation" 220.00 USD
