@@ -183,15 +183,28 @@ class BeancountEnvelope:
 
         # Set overspent
         for index, month in enumerate(months):
+            LAST_MONTH = months[index - 1]
+            TWO_MONTHS_AGO = months[index - 2]
+            
+            overspent = Decimal(0.00)
             if index == 0:
-                self.income_df.loc["Overspent", month] = Decimal(0.00)
+                self.income_df.loc["Overspent", month] = overspent
             else:
-                overspent = Decimal(0.00)
+                
                 for index2, row in self.envelope_df.iterrows():
-                    if row[months[index - 1], "available"] < Decimal(0.00):
-                        overspent += Decimal(
-                            row[months[index - 1], "available"]
-                        )
+                    if row[LAST_MONTH, "available"] < Decimal(0.00):
+                        if index == 1 or not self.negative_rollover:
+                            overspent += Decimal(
+                                row[LAST_MONTH, "available"]
+                            )
+                        else:
+                            # do not carry over overspent to subsequent months
+                            overspent += Decimal(
+                                row[LAST_MONTH, "available"]
+                            ) - Decimal(
+                                row[TWO_MONTHS_AGO, "available"]
+                            )
+
                 self.income_df.loc["Overspent", month] = overspent
 
         # Set Budgeted for month
