@@ -1,23 +1,9 @@
-{% set budget_id = request.args.get('budget', '0') | int %}
-
 {% set month = request.args.get('month') %}
-{% if not month%}
-{% set month = extension.get_budget_months(budget_id)[-1] %}
+{% if not month %}
+{% set month = extension.get_budget_months()[-1] %}
 {% endif %}
 
-{% set bootstrap = extension.bootstrap(budget_id, month) %}
-
-<div class="headerline">
-  {% for budget in bootstrap.budgets %}
-  <h3>
-    {%- if budget_id == loop.index0 -%}
-      {{ budget.name }}
-    {%- else -%}
-      <a href="{{ url_for('extension_report', extension_name='EnvelopeBudget', budget=loop.index0) }}">{{ budget.name }}</a>
-    {%- endif -%}
-  </h3>
-  {% endfor %}
-</div>
+{% set bootstrap = extension.bootstrap(month) %}
 
 <div class="headerline">
   {% for m in bootstrap.months %}
@@ -25,7 +11,7 @@
     {%- if month == m -%}
       {{ m }}
     {%- else -%}
-      <a href="{{ url_for('extension_report', extension_name='EnvelopeBudget', budget=budget_id, month=m) }}">{{ m }}</a>
+      <a href="{{ url_for('extension_report', extension_name='EnvelopeBudget', month=m) }}">{{ m }}</a>
     {%- endif -%}
   </h3>
   {% endfor %}
@@ -33,7 +19,25 @@
 
 <h3>{{ month }}</h3>
 
-{% import "_query_table.html" as querytable with context %}
+<table>
+  <thead><tr><th>Name</th><th>Amount</th></tr></thead>
+  <tbody>
+    {% for row in bootstrap.top %}
+    <tr><td>{{ row.Name }}</td><td>{{ row.Amount }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
 
-{{ querytable.querytable(ledger, None, bootstrap.top[0], bootstrap.top[1]) }}
-{{ querytable.querytable(ledger, None, bootstrap.envelopes[0], bootstrap.envelopes[1]) }}
+<table>
+  <thead><tr><th>Account</th><th>Budgeted</th><th>Activity</th><th>Available</th></tr></thead>
+  <tbody>
+    {% for row in bootstrap.envelopes %}
+    <tr>
+      <td>{{ row.Account }}</td>
+      <td>{{ row.Budgeted }}</td>
+      <td>{{ row.Activity }}</td>
+      <td>{{ row.Available }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
