@@ -3,3 +3,4 @@
 src/fava_envelope/__pycache__
 src/fava_envelope/cli/__pycache__/__main__.cpython-311.pyc
 .venv
+*.pyc

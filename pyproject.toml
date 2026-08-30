@@ -14,36 +14,27 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
 ]
 
 dependencies = [
     "fava>=1.26",
-    "pandas>=2.2.2",
     "Click >= 7",
-    "beanquery>=0.1.0",
+    "beanquery>=0.2.0",
     "beancount>=3.0.0",
+    "pytest>=8.3.4",
+    "polars>=1.36.1",
 ]
 
 [dependency-groups]
 dev = [
-  {include-group = "test"},
-  {include-group = "typing"},
-  {include-group = "lint"},
+    "pytest>=8.4.2",
 ]
-typing = [
-    "pandas-stubs>=2.2.2",
-  "mypy>=1.13.0",
-]
-test = [
-  "pytest-cov>=6.0.0",
-  "pytest-django>=4.9.0",
-  "pytest>=8.3.3",
-]
-lint = [
-  "ruff>=0.7.2",
+[tool.uv]
+override-dependencies = [
+    # tatsu-lts pretty consistently fails to build on my machine, I think something with the codegen is failing.
+    "tatsu-lts==5.14.0",
 ]
 
 [build-system]
@@ -58,6 +49,9 @@ changelog = "https://github.com/polarmutex/fava-envelope/master/CHANGELOG.md"
 
 [tool.black]
 line-length = 79
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
 
 [tool.ruff.lint]
 select = [
@@ -83,3 +77,4 @@ exclude = [
 useLibraryCodeForTypes = true
 venvPath="."
 venv=".venv"
+
