@@ -1,12 +1,21 @@
 from __future__ import annotations
 
+import datetime
+import re
+from collections.abc import Iterable
 from dataclasses import dataclass
+from itertools import chain
+from typing import Any
 
 import polars as pl
 from fava.ext import FavaExtensionBase
 from fava.helpers import FavaAPIError
 
-from .modules.beancount_envelope import BeancountEnvelope
+from .modules.beancount_envelope import BeancountEnvelope, EnvelopeSettings
+
+
+def flatten(ible: Iterable[Any]) -> list[Any]:
+    return list(chain.from_iterable(ible))
 
 
 @dataclass(frozen=True)
@@ -19,15 +28,82 @@ class BudgetCtx:
 
 class EnvelopeBudget(FavaExtensionBase):
     report_title = "Envelope Budget"
+    _buget: BudgetCtx | None = None
+
+    def _read_settings_from_config(self) -> EnvelopeSettings | None:
+        """Parse structural envelope config from the fava extension config block.
+
+        Expects self.config to be a dict with keys:
+          - 'start date' (required)
+          - 'budget accounts' (list of regex strings)
+          - 'mappings' (list of [from, to] pairs)
+          - 'income accounts' (list of regex strings)
+          - 'currency' (string)
+          - 'months ahead' (int)
+          - 'negative rollover' (bool)
+        """
+        cfg = self.config if isinstance(self.config, dict) else {}
+        start_date = cfg.get("start date")
+        budgets = cfg.get("budgets", [])
+        if not budgets:
+            # Fall back to flat config as a single budget
+            budgets = [cfg] if cfg.get("start date") else []
+
+        if not budgets:
+            raise FavaAPIError(
+                "The envelope budget requires at least one budget account."
+            )
+        start_dates: list[str] = [bgt.get("start date") for bgt in budgets]
+        if not start_dates:
+            raise FavaAPIError(
+                "The envelope budget requires at least one budget with a start date."
+            )
+        if not start_date:
+            start_date = min(start_dates)
+            if not start_date:
+                raise FavaAPIError(
+                    """The envelope budget requires at least \
+                    a single budget account with a start date."""
+                )
+
+        currency = cfg.get("currency")
+        budget_accounts = []
+        mappings = []
+        income_accounts = []
+        for budget in cfg.get("budgets", []):
+            budget_accounts += [
+                re.compile(p) for p in budget.get("budget accounts", [])
+            ]
+            mappings += [
+                (re.compile(x), y)
+                for [x, y] in budget.get("mappings", budget.get("mapping", []))
+            ]
+            income_accounts += [
+                re.compile(p) for p in budget.get("income accounts", [])
+            ]
+            if currency is None:
+                currency = budget.get("currency") or None
+
+        return EnvelopeSettings(
+            start_date=start_date,
+            budget_accounts=budget_accounts,
+            mappings=mappings,
+            income_accounts=income_accounts,
+            months_ahead=int(cfg.get("months ahead", 0)),
+            currency=cfg.get("currency") or None,
+            negative_rollover=bool(cfg.get("negative rollover", False)),
+        )
 
     def after_load_file(self) -> None:
+        settings = self._read_settings_from_config()
+        if settings is None:
+            self._budget: BudgetCtx | None = None
+            return
         module = BeancountEnvelope(
             self.ledger.all_entries,
             self.ledger.options,
+            settings=settings,
         )
-        if module.start_date is None:
-            self._budget: BudgetCtx | None = None
-            return
         income_df, envelope_df, currency = module.envelope_tables()
         months = list(income_df.columns[1:])  # drop 'row'
         self._budget = BudgetCtx(
@@ -54,7 +130,10 @@ class EnvelopeBudget(FavaExtensionBase):
         }
 
     def get_budget_months(self) -> list[str]:
-        return self._require_budget().months
+        try:
+            return self._require_budget().months
+        except FavaAPIError:
+            return [str(datetime.date.today().month)]
 
     def _income_table_rows(
         self, budget: BudgetCtx, month: str | None
